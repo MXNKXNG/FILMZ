@@ -5,7 +5,7 @@ export const Layout = () => {
       <header className="inset-x top-0 text-xs min-[750px]:text-sm whitespace-nowrap ">
         <nav className="flex fixed border z-50 justify-between items-center px-10 py-5 w-screen h-20 bg-white ">
           <Link to="/">
-            <h1 className="text-2xl">Filmz</h1>
+            <h1 className="text-2xl">FiLMZ</h1>
           </Link>
 
           <ul className="flex justify-center items-center gap-10">
