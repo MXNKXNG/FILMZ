@@ -1,9 +1,18 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { movieDetailSlice, movieListSlice } from "./slice";
+import {
+  movieDetailSlice,
+  movieLogoSlice,
+  nowListSlice,
+  popularListSlice,
+  upComingListSlice,
+} from "./slice";
 
 export const store = configureStore({
   reducer: {
-    movieList: movieListSlice.reducer,
-    movieDetail: movieDetailSlice.reducer,
+    upComingList: upComingListSlice.reducer,
+    popularList: popularListSlice.reducer,
+    nowList: nowListSlice.reducer,
+    detail: movieDetailSlice.reducer,
+    logo: movieLogoSlice.reducer,
   },
 });
