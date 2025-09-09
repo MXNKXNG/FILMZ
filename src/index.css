@@ -2,10 +2,11 @@
 
 @layer base {
   :root {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100vh;
+    --app-bg: #060c18;
+  }
+
+  body {
+    background-color: var(--app-bg);
   }
 }
 
@@ -16,5 +17,58 @@
   }
   .scrollbar-none::-webkit-scrollbar {
     display: none;
+  }
+
+  @keyframes logo {
+    from {
+      opacity: 0;
+      transform: translateY(-80px) rotate(-20deg);
+    }
+    17% {
+      opacity: 1;
+      transform: translateY(-10px) rotate(-30deg);
+    }
+    40% {
+      transform: translateY(-10px) rotate(-20deg);
+    }
+    45% {
+      transform: translateY(0) rotate(8deg);
+    }
+    50% {
+      transform: rotate(-2deg);
+    }
+    52% {
+      transform: rotate(0deg);
+    }
+  }
+  .animate-logo {
+    animation: logo 4s cubic-bezier(0.73, 0.08, 0.92, 0.85);
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+  }
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out both;
+  }
+  .animate-fade-out {
+    animation: fade-out 0.4s ease-out both;
   }
 }

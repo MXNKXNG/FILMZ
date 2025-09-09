@@ -1,64 +1,110 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Banner } from "../components/banner";
 import { MovieCard } from "../components/MovieCard";
 import { MovieCardSkeleton } from "../components/MovieCardSkeleton";
-import { fetchNowList, fetchPopularList } from "../store/thunk";
+import { fetchMovieList, fetchUpComingList } from "../store/thunk";
+import { date } from "../utils/dataFilter";
 import { loadFlag } from "../utils/loadingFlag";
 
 export const Main = () => {
   const dispatch = useDispatch();
-  const nowData = useSelector((state) => state.nowList);
-  const popularData = useSelector((state) => state.popularList);
+  const movieData = useSelector((state) => state.movieList);
+  const upComingData = useSelector((state) => state.upComingList);
 
-  const isNowLoad = loadFlag(nowData.status, nowData.nowList);
-  const isPopularLoad = loadFlag(popularData.status, popularData.popularList);
+  const isNowLoad = loadFlag(movieData.status, movieData.nowPlaying.data);
+  const isPopularLoad = loadFlag(movieData.status, movieData.popular.data);
+  const isUpComingLoad = loadFlag(
+    upComingData.status,
+    upComingData.upComing.data
+  );
+
+  const containerRef = useRef(null);
+
+  // 영화 개봉 기간 필터
+  const { upComing, nowPopular } = date;
 
   useEffect(() => {
-    dispatch(fetchNowList(1));
-    dispatch(fetchPopularList(1));
-  }, [dispatch]);
+    dispatch(
+      fetchMovieList({
+        page: 1,
+        minDate: nowPopular.minDate,
+        maxDate: nowPopular.maxDate,
+      })
+    );
+
+    dispatch(
+      fetchUpComingList({
+        page: 1,
+        minDate: upComing.minDate,
+        maxDate: upComing.maxDate,
+      })
+    );
+  }, [
+    dispatch,
+    nowPopular.minDate,
+    nowPopular.maxDate,
+    upComing.minDate,
+    upComing.maxDate,
+  ]);
 
   return (
-    <main className="flex flex-col h-full bg-black text-white text-xl font-medium gap-10 pb-10">
-      <article className="flex justify-center items-center px-5 py-16 flex-nowrap ">
-        <div className="overflow-x-auto scrollbar-none">
-          <img
-            className="aspect-[16/9] "
-            src="https://image.tmdb.org/t/p/w500/mEW9XMgYDO6U0MJcIRqRuSwjzN5.jpg"
-            alt="test"
-          />
-        </div>
-      </article>
-      <article className="flex flex-col pl-6 pr-1">
-        <h1 className="py-4 w-full" aria-label="category name">
+    <main className="flex flex-col h-full gap-4 pb-10 select-none text-white font-semibold text-xl animate-fade-in max-[513px]:text-lg">
+      {/* Up Coming List */}
+      <section
+        ref={containerRef}
+        className="relative flex py-10 overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth"
+      >
+        {isUpComingLoad
+          ? Array.from({ length: 10 }).map((_, idx) => (
+              <MovieCardSkeleton
+                className="w-dvw aspect-video flex mx-56  max-[1025px]:mx-0"
+                idx={idx}
+                key={idx}
+              />
+            ))
+          : upComingData.upComing.data?.map((el) => (
+              <Banner
+                el={el}
+                baseUrl={upComingData.baseUrl}
+                key={el.id}
+                containerRef={containerRef}
+              />
+            ))}
+      </section>
+
+      {/* Now Playing List */}
+      <article className="flex flex-col z-20 pl-8 pr-2.5 max-[513px]:pl-1.5 max-[1025px]:pl-3.5">
+        <h1 className=" w-full px-1" aria-label="category name">
           상영 중인 영화
         </h1>
-        <div className="flex gap-2 overflow-x-auto scrollbar-none ">
+        <div className="flex gap-5 max-[513px]:gap-2.5  py-3 overflow-x-auto scrollbar-none ">
           {isNowLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
                 <MovieCardSkeleton className="w-50" idx={idx} key={idx} />
               ))
-            : nowData.nowList.results?.map((el) => (
-                <MovieCard el={el} baseUrl={nowData.baseUrl} key={el.id} />
+            : movieData.nowPlaying.data?.map((el) => (
+                <MovieCard el={el} baseUrl={movieData.baseUrl} key={el.id} />
               ))}
         </div>
       </article>
 
-      <article className="flex flex-col pl-6 pr-1">
-        <h1 className="py-4 w-full" aria-label="category name">
+      {/* Popular List */}
+      <article className="flex flex-col z-20 pl-8 pr-2.5 max-[513px]:pl-1.5 max-[1025px]:pl-3.5">
+        <h1 className="w-full px-1" aria-label="category name">
           인기 있는 영화
         </h1>
-        <div className="flex gap-2 overflow-x-auto scrollbar-none ">
+        <div className="flex gap-5 max-[513px]:gap-2.5  py-3 overflow-x-auto scrollbar-none ">
           {isPopularLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
                 <MovieCardSkeleton className="w-50" idx={idx} key={idx} />
               ))
-            : popularData.popularList.results?.map((el, idx) => (
+            : movieData.popular.data?.map((el, idx) => (
                 <MovieCard
                   el={el}
                   variant="popular"
                   idx={idx}
-                  baseUrl={popularData.baseUrl}
+                  baseUrl={movieData.baseUrl}
                   key={el.id}
                 />
               ))}

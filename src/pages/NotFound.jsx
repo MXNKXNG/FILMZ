@@ -1,7 +1,12 @@
+import { Link } from "react-router";
+
 export const NotFound = () => {
   return (
-    <section>
-      <div>????????</div>
+    <section className="py-20 text-white flex flex-col justify-center items-center text-base font-light max-[513px]:text-sm">
+      <h1 className="pb-10">페이지 정보가 없습니다.</h1>
+      <Link className="cursor-pointer p-2" to="/">
+        홈으로 가기
+      </Link>
     </section>
   );
 };

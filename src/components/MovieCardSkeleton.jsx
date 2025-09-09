@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { Skeleton } from "./Skeleton";
 
-export const MovieCardSkeleton = ({ className = "" }) => {
+export const MovieCardSkeleton = memo(({ className = "" }) => {
   return (
     <article className="relative w-full h-full flex px-2 py-2 justify-center items-center">
       <Skeleton
@@ -8,4 +9,4 @@ export const MovieCardSkeleton = ({ className = "" }) => {
       ></Skeleton>
     </article>
   );
-};
+});
