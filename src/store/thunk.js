@@ -1,17 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 const apiKey = import.meta.env.VITE_API_KEY;
-const token = apiKey.replace(/^['"]|['"]$/g, "").trim();
-
-if (!token) {
-  throw new Error(
-    "VITE_API_KEY가 빌드 타임에 주입되지 않았습니다. (Preview/Production 환경변수 설정 및 재배포 필요)"
-  );
-}
-if (!token.startsWith("eyJ")) {
-  throw new Error(
-    "VITE_API_KEY 형식 오류: v4 Read Access Token(eyJ...)인지 확인하세요."
-  );
-}
 
 // 받을 데이터 기본 틀
 export const shapeData = (result) =>
@@ -35,7 +23,7 @@ export const fetchMovieList = createAsyncThunk(
       method: "GET",
       headers: {
         accept: "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       signal,
     };
@@ -80,7 +68,7 @@ export const fetchUpComingList = createAsyncThunk(
       method: "GET",
       headers: {
         accept: "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       signal,
     };
@@ -105,7 +93,7 @@ export const fetchDetails = createAsyncThunk(
       method: "GET",
       headers: {
         accept: "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       signal,
     };
@@ -128,7 +116,7 @@ export const fetchSearch = createAsyncThunk(
       method: "GET",
       headers: {
         accept: "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       signal,
     };
