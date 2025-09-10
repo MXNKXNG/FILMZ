@@ -28,11 +28,8 @@ export const fetchMovieList = createAsyncThunk(
       signal,
     };
 
-    const nowPlayingURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=popularity.desc&vote_count.gte=50&with_origin_country=KR&with_release_type=2|3`;
-    const popularURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=vote_count.desc&vote_count.gte=600&with_origin_country=KR&with_release_type=2|3`;
-
-    console.log("[DISCOVER] page:", page, "min:", minDate, "max:", maxDate);
-    console.log("[DISCOVER] URL:", nowPlayingURL || popularURL);
+    const nowPlayingURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=popularity.desc&vote_count.gte=50&with_origin_country=KR|US|JP|GB|CA|AU|NZ|HK|TW|CN|FR|DE|ES|IT|NL|BE|SE|NO|DK|FI&with_release_type=2|3`;
+    const popularURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=vote_count.desc&vote_count.gte=600&with_origin_country=KR|US|JP|GB|CA|AU|NZ|HK|TW|CN|FR|DE|ES|IT|NL|BE|SE|NO|DK|FI&with_release_type=2|3`;
 
     try {
       const [popularRes, nowPlayingRes] = await Promise.all([
@@ -76,14 +73,7 @@ export const fetchUpComingList = createAsyncThunk(
       signal,
     };
 
-    const upComingURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=popularity.desc&with_origin_country=KR&with_release_type=2|3`;
-
-    console.log("[DISCOVER] page:", page, "min:", minDate, "max:", maxDate);
-
-    console.log(
-      "[DISCOVER] with_origin_country?",
-      upComingURL?.match(/with_origin_country=([^&]+)/)?.[1]
-    );
+    const upComingURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=popularity.desc&with_origin_country=KR|US|JP|GB|CA|AU|NZ|HK|TW|CN|FR|DE|ES|IT|NL|BE|SE|NO|DK|FI&with_release_type=2|3`;
 
     const response = await fetch(`${upComingURL}`, { ...options });
     const data = await response.json();
