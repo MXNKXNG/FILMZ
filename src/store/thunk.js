@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-const apiKey = import.meta.env.VITE_API_KEY;
-const token = apiKey.replace(/^['"]|['"]$/g, "").trim();
+const raw = import.meta?.env && import.meta.env.VITE_API_KEY;
+const token = raw.replace(/^['"]|['"]$/g, "").trim();
 
 if (!token) {
   throw new Error(
