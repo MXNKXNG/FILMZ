@@ -1,139 +1,112 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
-  fetchMovieDetail,
-  fetchMovieLogo,
-  fetchNowList,
-  fetchPopularList,
+  fetchDetails,
+  fetchMovieList,
+  fetchSearch,
   fetchUpComingList,
 } from "./thunk";
 
-//
+// 현재 상영 & 인기 영화 슬라이스
+export const movieListSlice = createSlice({
+  name: "listData",
+  initialState: {
+    status: "idle",
+    error: null,
+    baseUrl: "https://image.tmdb.org/t/p/w300",
+    popular: { data: [] },
+    nowPlaying: { data: [] },
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchMovieList.pending, (state) => {
+        console.log("pending");
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchMovieList.rejected, (state, action) => {
+        console.log("failed");
+        state.status = "failed";
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(fetchMovieList.fulfilled, (state, action) => {
+        console.log("succeeded");
+        state.status = "succeeded";
+        state.upComing = action.payload.upComing;
+        state.popular = action.payload.popular;
+        state.nowPlaying = action.payload.nowPlaying;
+      });
+  },
+});
+
+// 개봉 예정 슬라이스
 export const upComingListSlice = createSlice({
   name: "upComingList",
   initialState: {
-    upComingList: [],
+    upComing: { data: [] },
     status: "idle",
-    baseUrl: "https://image.tmdb.org/t/p/w500",
+    baseUrl: "https://image.tmdb.org/t/p/original",
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchUpComingList.pending, (state) => {
-        console.log("upComing pending");
         state.status = "loading";
       })
       .addCase(fetchUpComingList.rejected, (state) => {
-        console.log("upComing failed");
         state.status = "failed";
       })
       .addCase(fetchUpComingList.fulfilled, (state, action) => {
-        console.log("upComing succeeded");
         state.status = "succeeded";
-        state.upComingList = action.payload;
+        state.upComing = action.payload.upComing;
       });
   },
 });
 
-export const popularListSlice = createSlice({
-  name: "popularList",
+// 영화 디테일 정보 슬라이스
+export const detailSlice = createSlice({
+  name: "movieDetails",
   initialState: {
-    popularList: [],
+    data: [],
     status: "idle",
     baseUrl: "https://image.tmdb.org/t/p/w500",
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchPopularList.pending, (state) => {
-        console.log("popularList pending");
+      .addCase(fetchDetails.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchPopularList.rejected, (state) => {
-        console.log("popularList failed");
+      .addCase(fetchDetails.rejected, (state) => {
         state.status = "failed";
       })
-      .addCase(fetchPopularList.fulfilled, (state, action) => {
-        console.log("popularList succeeded");
+      .addCase(fetchDetails.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.popularList = action.payload;
+        state.data = action.payload;
       });
   },
 });
 
-export const nowListSlice = createSlice({
-  name: "nowList",
+// 검색 정보 슬라이스
+export const searchSlice = createSlice({
+  name: "searchSlice",
   initialState: {
-    nowList: [],
+    data: [],
     status: "idle",
-    baseUrl: "https://image.tmdb.org/t/p/w500",
+    baseUrl: "https://image.tmdb.org/t/p/w300",
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchNowList.pending, (state) => {
-        console.log("nowList pending");
+      .addCase(fetchSearch.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchNowList.rejected, (state) => {
-        console.log("nowList failed");
+      .addCase(fetchSearch.rejected, (state) => {
         state.status = "failed";
       })
-      .addCase(fetchNowList.fulfilled, (state, action) => {
-        console.log("nowList succeeded");
+      .addCase(fetchSearch.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.nowList = action.payload;
-      });
-  },
-});
-
-export const movieDetailSlice = createSlice({
-  name: "movieDetail",
-  initialState: {
-    detail: [],
-    status: "idle",
-    baseUrl: "https://image.tmdb.org/t/p/w500",
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchMovieDetail.pending, (state) => {
-        console.log("Detail pending");
-        state.status = "loading";
-      })
-      .addCase(fetchMovieDetail.rejected, (state) => {
-        console.log("Detail failed");
-        state.status = "failed";
-      })
-      .addCase(fetchMovieDetail.fulfilled, (state, action) => {
-        console.log("Detail succeeded");
-        state.status = "succeeded";
-        state.detail = action.payload;
-      });
-  },
-});
-
-export const movieLogoSlice = createSlice({
-  name: "movieLogo",
-  initialState: {
-    logo: [],
-    status: "idle",
-    baseUrl: "https://image.tmdb.org/t/p/w500",
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchMovieLogo.pending, (state) => {
-        state.status = "loading";
-        console.log("logo pending");
-      })
-      .addCase(fetchMovieLogo.rejected, (state) => {
-        state.status = "failed";
-        console.log("logo failed");
-      })
-      .addCase(fetchMovieLogo.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.logo = action.payload;
-        console.log("logo succeeded");
+        state.data = action.payload;
       });
   },
 });

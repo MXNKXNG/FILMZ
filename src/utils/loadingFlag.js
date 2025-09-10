@@ -1,4 +1,4 @@
-export const loadFlag = (status, results) => {
-  const isLoading = status === "loading" && (results?.length ?? 0) === 0;
+export const loadFlag = (status, data) => {
+  const isLoading = status === "loading" && (data?.length ?? 0) === 0;
   return isLoading;
 };

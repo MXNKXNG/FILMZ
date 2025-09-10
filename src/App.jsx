@@ -4,8 +4,8 @@ import { Layout } from "./components/Layout";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { Detail } from "./pages/Detail";
 import { Home } from "./pages/Home";
+import { Login } from "./pages/Login";
 import { Main } from "./pages/Main";
-import { MyList } from "./pages/MyList";
 import { NotFound } from "./pages/NotFound";
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
         <Route index element={<Home />} />
         <Route element={<Layout />}>
           <Route path="/main" element={<Main />} />
-          <Route path="/mylist" element={<MyList />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/main/:id" element={<Detail />} />
           <Route path="*" element={<NotFound />} />
         </Route>
