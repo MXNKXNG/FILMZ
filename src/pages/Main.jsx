@@ -1,6 +1,7 @@
+import dayjs from "dayjs";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Banner } from "../components/banner";
+import { Banner } from "../components/Banner";
 import { MovieCard } from "../components/MovieCard";
 import { MovieCardSkeleton } from "../components/MovieCardSkeleton";
 import { fetchMovieList, fetchUpComingList } from "../store/thunk";
@@ -20,6 +21,7 @@ export const Main = () => {
   );
 
   const containerRef = useRef(null);
+  const today = dayjs().startOf("day");
 
   // 영화 개봉 기간 필터
   const { upComing, nowPopular } = date;
@@ -49,7 +51,7 @@ export const Main = () => {
   ]);
 
   return (
-    <main className="flex flex-col h-full gap-4 pb-10 select-none text-white font-semibold text-xl animate-fade-in max-[513px]:text-lg">
+    <main className="flex flex-col h-full gap-4 pb-10 select-none text-white font-semibold text-xl min-[2048px]:text-3xl animate-fade-in max-[513px]:text-lg bg-radial-[at_15%_10%] from-[#1f202d] to-[#060c18] to-30%">
       {/* Up Coming List */}
       <section
         ref={containerRef}
@@ -63,14 +65,20 @@ export const Main = () => {
                 key={idx}
               />
             ))
-          : upComingData.upComing.data?.map((el) => (
-              <Banner
-                el={el}
-                baseUrl={upComingData.baseUrl}
-                key={el.id}
-                containerRef={containerRef}
-              />
-            ))}
+          : upComingData.upComing.data?.map((el) => {
+              const diff = dayjs(el.release_date)
+                .startOf("day")
+                .diff(today, "day");
+              return (
+                <Banner
+                  el={el}
+                  baseUrl={upComingData.baseUrl}
+                  key={el.id}
+                  containerRef={containerRef}
+                  diff={diff}
+                />
+              );
+            })}
       </section>
 
       {/* Now Playing List */}
@@ -78,7 +86,7 @@ export const Main = () => {
         <h1 className=" w-full px-1" aria-label="category name">
           상영 중인 영화
         </h1>
-        <div className="flex gap-5 max-[513px]:gap-2.5  py-3 overflow-x-auto scrollbar-none ">
+        <div className="flex gap-5 max-[513px]:gap-2.5 py-3 min-[2048px]:py-8 overflow-x-auto scrollbar-none ">
           {isNowLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
                 <MovieCardSkeleton className="w-50" idx={idx} key={idx} />
@@ -94,7 +102,7 @@ export const Main = () => {
         <h1 className="w-full px-1" aria-label="category name">
           인기 있는 영화
         </h1>
-        <div className="flex gap-5 max-[513px]:gap-2.5  py-3 overflow-x-auto scrollbar-none ">
+        <div className="flex gap-5 max-[513px]:gap-2.5  py-3 min-[2048px]:py-8 overflow-x-auto scrollbar-none ">
           {isPopularLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
                 <MovieCardSkeleton className="w-50" idx={idx} key={idx} />

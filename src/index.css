@@ -26,7 +26,7 @@
     }
     17% {
       opacity: 1;
-      transform: translateY(-10px) rotate(-30deg);
+      transform: translateY(-10px) rotate(-36deg);
     }
     40% {
       transform: translateY(-10px) rotate(-20deg);

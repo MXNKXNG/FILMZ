@@ -99,7 +99,7 @@ export const fetchDetails = createAsyncThunk(
     };
 
     const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}?language=ko-KR&append_to_response=videos,images,credits&include_image_language=en,null&include_video_language=ko,en,null`,
+      `https://api.themoviedb.org/3/movie/${id}?language=ko-KR&append_to_response=videos,images,credits&include_image_language=en&include_video_language=ko`,
       options
     );
     const data = await response.json();
