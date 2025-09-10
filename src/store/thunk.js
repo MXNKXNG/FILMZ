@@ -28,8 +28,8 @@ export const fetchMovieList = createAsyncThunk(
       signal,
     };
 
-    const nowPlayingURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=popularity.desc&vote_count.gte=50&with_origin_country=KR%${apiKey}&with_release_type=2|3`;
-    const popularURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=vote_count.desc&vote_count.gte=600&with_origin_country=KR%${apiKey}&with_release_type=2|3`;
+    const nowPlayingURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=popularity.desc&vote_count.gte=50&with_origin_country=KR&${apiKey}&with_release_type=2|3`;
+    const popularURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=vote_count.desc&vote_count.gte=600&with_origin_country=KR&${apiKey}&with_release_type=2|3`;
 
     try {
       const [popularRes, nowPlayingRes] = await Promise.all([
@@ -73,7 +73,7 @@ export const fetchUpComingList = createAsyncThunk(
       signal,
     };
 
-    const upComingURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=popularity.desc&with_origin_country=KR%${apiKey}&with_release_type=2|3`;
+    const upComingURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=popularity.desc&with_origin_country=KR&${apiKey}&with_release_type=2|3`;
     const response = await fetch(`${upComingURL}`, { ...options });
     const data = await response.json();
 
