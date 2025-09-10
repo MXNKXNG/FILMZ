@@ -16,8 +16,6 @@ export const Detail = memo(() => {
     details.data?.images?.logos?.find((el) => el.iso_639_1 === "en");
   const isDetailLoad = loadFlag(details.status, details.data);
 
-  console.log(details);
-
   useEffect(() => {
     dispatch(fetchDetails(Number(param.id)));
   }, [dispatch, param]);
