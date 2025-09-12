@@ -21,17 +21,14 @@ export const movieListSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMovieList.pending, (state) => {
-        console.log("pending");
         state.status = "loading";
         state.error = null;
       })
       .addCase(fetchMovieList.rejected, (state, action) => {
-        console.log("failed");
         state.status = "failed";
         state.error = action.payload || action.error.message;
       })
       .addCase(fetchMovieList.fulfilled, (state, action) => {
-        console.log("succeeded");
         state.status = "succeeded";
         state.koreaMade = action.payload.koreaMade;
         state.popular = action.payload.popular;

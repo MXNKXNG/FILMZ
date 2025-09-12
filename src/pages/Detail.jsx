@@ -20,16 +20,14 @@ export const Detail = memo(() => {
     (el) => el.site === "YouTube"
   );
 
-  const hasProfileImg = details.data?.credits?.cast.filter(
+  const hasProfileImg = details?.data?.credits?.cast?.filter(
     (el) => el.profile_path
   );
-  console.log(hasProfileImg);
 
   useEffect(() => {
     dispatch(fetchDetails(Number(param.id)));
   }, [dispatch, param]);
 
-  console.log(details);
   return (
     <section className="flex h-full pb-40 flex-col items-center justify-center text-pretty animate-fade-in px-40 max-[513px]:px-4 max-[1025px]:px-16 bg-radial-[at_5%_15%] from-[#413137] via-[#2c1818] to-[#1b0d0d]">
       {/* 영화 로고 */}
@@ -84,7 +82,7 @@ export const Detail = memo(() => {
             </figure>
 
             {/* 오리지널 타이틀 & 개봉 연도 */}
-            <article className="flex flex-col shrink-2 px-4 py-10 h-full text-base max-[513px]:text-sm min-[1024px]:text-lg min-[2048px]:text-2xl">
+            <article className="flex flex-col shrink-2 px-4 py-10  h-full text-base max-[513px]:text-sm min-[1024px]:text-lg min-[2048px]:text-2xl">
               <div className="flex justify-between items-center pb-2 gap-15 text-gray-400">
                 <p className="">{details.data?.original_title}</p>
                 <p className="font-light ">
@@ -132,7 +130,9 @@ export const Detail = memo(() => {
               </div>
               {/* 한 줄 태그 */}
               {details.data?.tagline && (
-                <p className="flex py-4">{details.data?.tagline}</p>
+                <p className="flex py-4 min-[2048px]:py-8">
+                  {details.data?.tagline}
+                </p>
               )}
               {/* 줄거리 */}
               <div className="pt-8">
@@ -145,8 +145,8 @@ export const Detail = memo(() => {
 
           {/* 추가 이미지 & 영상 */}
           <article className="flex py-8 max-[1025px]:py-4 flex-col px-4 text-base min-[1024px]:text-xl min-[2048px]:text-2xl">
-            <h6>이미지</h6>
-            <div className="flex py-4 overflow-scroll scrollbar-none">
+            <h6>추가 이미지</h6>
+            <div className="flex py-4 max-[513px]:py-2 overflow-scroll scrollbar-none">
               {details.data?.images?.backdrops?.map((el, idx) => (
                 <img
                   className="aspect-video max-[1025px]:w-52"
@@ -159,7 +159,7 @@ export const Detail = memo(() => {
 
             <div className="py-8 flex w-full flex-col">
               <h6>트레일러 & 티저 영상</h6>
-              <div className="flex py-4 gap-4 rounded-2xl overflow-scroll scrollbar-none max-[1025px]:snap-x max-[1025px]:snap-mandatory">
+              <div className="flex py-4 max-[513px]:py-2 gap-4 rounded-2xl overflow-scroll scrollbar-none max-[1025px]:snap-x max-[1025px]:snap-mandatory">
                 {getYouTube &&
                   getYouTube?.map((el, idx) => (
                     <iframe
@@ -168,25 +168,26 @@ export const Detail = memo(() => {
                       width={490}
                       src={`https://www.youtube.com/embed/${el.key}`}
                       title="Teaser video"
-                      frameborder="0"
                     ></iframe>
                   ))}
               </div>
             </div>
             <div className="py-8 flex w-full flex-col">
               <h6>출연진</h6>
-              <div className="flex overflow-scroll scrollbar-none py-4 gap-4">
+              <div className="flex overflow-scroll text-nowrap scrollbar-none py-4 max-[513px]:py-2 gap-14 max-[513px]:gap-8 min-[2048px]:gap-20 text-base max-[1025px]:text-sm max-[513px]:text-xs">
                 {hasProfileImg?.map((el) => (
-                  <div className="w-40" key={el.id}>
+                  <div className="flex" key={el.id}>
                     <img
-                      className="aspect-[2/3] min-w-32 rounded-2xl"
+                      className="aspect-[2/3] min-w-32 max-[1025px]:min-w-24 max-[513px]:min-w-14 rounded-4xl"
                       height={120}
                       src={`${details.baseUrl}${el.profile_path}`}
                       alt="cast profile image"
                     />
-                    <div className="py-1">
+                    <div className="p-2 flex flex-col justify-center">
                       <p className="">{el.character}</p>
-                      <p className="text-gray-400">{el.name}</p>
+                      <p className="text-gray-400 text-sm max-[1025px]:text-xs max-[513px]:text-[10px]">
+                        {el.name}
+                      </p>
                     </div>
                   </div>
                 ))}
