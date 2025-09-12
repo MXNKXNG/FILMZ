@@ -144,7 +144,7 @@ export const Detail = memo(() => {
           </div>
 
           {/* 추가 이미지 & 영상 */}
-          <article className="flex py-8 max-[1025px]:py-4 flex-col px-4 text-base min-[1024px]:text-xl min-[2048px]:text-2xl">
+          <article className="flex py-16 max-[513px]:py-12 min-[2048px]:py-24 flex-col px-4 text-base min-[1024px]:text-xl min-[2048px]:text-2xl">
             <h6>추가 이미지</h6>
             <div className="flex py-4 max-[513px]:py-2 overflow-scroll scrollbar-none">
               {details.data?.images?.backdrops?.map((el, idx) => (
@@ -157,7 +157,7 @@ export const Detail = memo(() => {
               ))}
             </div>
 
-            <div className="py-8 flex w-full flex-col">
+            <div className="py-16 max-[513px]:py-12 min-[2048px]:py-24 flex w-full flex-col">
               <h6>트레일러 & 티저 영상</h6>
               <div className="flex py-4 max-[513px]:py-2 gap-4 rounded-2xl overflow-scroll scrollbar-none max-[1025px]:snap-x max-[1025px]:snap-mandatory">
                 {getYouTube &&
@@ -172,7 +172,7 @@ export const Detail = memo(() => {
                   ))}
               </div>
             </div>
-            <div className="py-8 flex w-full flex-col">
+            <div className="flex w-full flex-col">
               <h6>출연진</h6>
               <div className="flex overflow-scroll text-nowrap scrollbar-none py-4 max-[513px]:py-2 gap-14 max-[513px]:gap-8 min-[2048px]:gap-20 text-base max-[1025px]:text-sm max-[513px]:text-xs">
                 {hasProfileImg?.map((el) => (
