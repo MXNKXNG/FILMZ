@@ -16,10 +16,20 @@ export const Detail = memo(() => {
     details.data?.images?.logos?.find((el) => el.iso_639_1 === "en");
   const isDetailLoad = loadFlag(details.status, details.data);
 
+  const getYouTube = details.data?.videos?.results.filter(
+    (el) => el.site === "YouTube"
+  );
+
+  const hasProfileImg = details.data?.credits?.cast.filter(
+    (el) => el.profile_path
+  );
+  console.log(hasProfileImg);
+
   useEffect(() => {
     dispatch(fetchDetails(Number(param.id)));
   }, [dispatch, param]);
 
+  console.log(details);
   return (
     <section className="flex h-full pb-40 flex-col items-center justify-center text-pretty animate-fade-in px-40 max-[513px]:px-4 max-[1025px]:px-16 bg-radial-[at_5%_15%] from-[#413137] via-[#2c1818] to-[#1b0d0d]">
       {/* 영화 로고 */}
@@ -40,7 +50,7 @@ export const Detail = memo(() => {
       {isDetailLoad ? (
         <MovieCardSkeleton className="flex justify-center items-center w-full" />
       ) : (
-        <article className="-z-10 relative w-full flex  text-white rounded-4xl bg-black shadow-[4px_10px_20px_rgba(0,0,0,0.7)] flex-col min-[2048px]:px-24 py-14 max-[513px]:px-4 px-16">
+        <article className="-z-10 relative w-full h-full flex flex-col text-white rounded-4xl bg-black shadow-[4px_10px_20px_rgba(0,0,0,0.7)] min-[2048px]:px-24 py-14 max-[513px]:px-4 px-16">
           {/* 닫기 버튼 */}
           <button
             className="absolute top-5 min-[2048px]:top-8 right-5 h-10 w-10 max-[513px]:w-6 min-[2048px]:w-16 min-[2048px]:h-16 z-20 cursor-pointer hover:scale-110 active:scale-110 duration-300"
@@ -51,10 +61,10 @@ export const Detail = memo(() => {
           </button>
           <div className="flex max-[1025px]:flex-col">
             {/* 메인 포스터 */}
-            <figure className="p-4 flex-2 flex justify-center pointer-events-none ">
+            <figure className="p-4 flex shrink-1 justify-center pointer-events-none ">
               {(details.data?.poster_path && (
                 <img
-                  className="aspect-[2/3] h-1/1 object-cover rounded-3xl z-10"
+                  className="aspect-[2/3] object-cover rounded-3xl z-10"
                   src={`${details.baseUrl}${details.data?.poster_path}`}
                   alt="Movie main poster"
                 />
@@ -73,16 +83,16 @@ export const Detail = memo(() => {
                 ""}
             </figure>
 
-            {/* 텍스트 정보 */}
-            {/* row 1 */}
-            <article className="flex flex-col flex-3 px-4 py-10 h-full text-base max-[513px]:text-sm min-[1024px]:text-lg min-[2048px]:text-2xl">
+            {/* 오리지널 타이틀 & 개봉 연도 */}
+            <article className="flex flex-col shrink-2 px-4 py-10 h-full text-base max-[513px]:text-sm min-[1024px]:text-lg min-[2048px]:text-2xl">
               <div className="flex justify-between items-center pb-2 gap-15 text-gray-400">
                 <p className="">{details.data?.original_title}</p>
                 <p className="font-light ">
                   {details.data?.release_date?.slice(0, 4) || "-"}
                 </p>
               </div>
-              {/* row 2 */}
+
+              {/* 타이틀 & 평점 */}
               <div className="flex justify-between py-2 text-xl font-bold gap-15 min-[1024px]:text-2xl min-[2048px]:text-3xl">
                 <h1 className="">{details.data?.title ?? ""}</h1>
                 <p
@@ -101,7 +111,8 @@ export const Detail = memo(() => {
                     : "-"}
                 </p>
               </div>
-              {/* row 3 */}
+
+              {/* 장르 */}
               <div className="flex gap-2 min-[2048px]:gap-4 items-center pb-5 text-[10px] font-semibold min-[1024px]:text-xs min-[2048px]:text-lg">
                 {(details.data?.genres ?? []).slice(0, 2).map((g) => (
                   <p
@@ -119,28 +130,68 @@ export const Detail = memo(() => {
                   <p> • {details.data?.runtime}분</p>
                 )}
               </div>
-              {/* row 4 */}
+              {/* 한 줄 태그 */}
               {details.data?.tagline && (
                 <p className="flex py-4">{details.data?.tagline}</p>
               )}
-              {/* row 5 */}
-              <article className="pt-8">
+              {/* 줄거리 */}
+              <div className="pt-8">
                 <p className="leading-6 max-[513px]:leading-5 min-[2048px]:leading-8">
                   {details.data?.overview || "줄거리 정보가 없습니다."}
                 </p>
-              </article>
+              </div>
             </article>
           </div>
-          <article className="flex flex-col gap-4">
-            <div>
-              <h6>추가 이미지</h6>
-              <div className="flex overflow-scroll scrollbar-none">
-                {details.data?.images?.backdrops?.map((el) => (
-                  <img width={160} src={`${details.baseUrl}${el.file_path}`} />
+
+          {/* 추가 이미지 & 영상 */}
+          <article className="flex py-8 max-[1025px]:py-4 flex-col px-4 text-base min-[1024px]:text-xl min-[2048px]:text-2xl">
+            <h6>이미지</h6>
+            <div className="flex py-4 overflow-scroll scrollbar-none">
+              {details.data?.images?.backdrops?.map((el, idx) => (
+                <img
+                  className="aspect-video max-[1025px]:w-52"
+                  key={idx}
+                  width={315}
+                  src={`${details.baseUrl}${el.file_path}`}
+                />
+              ))}
+            </div>
+
+            <div className="py-8 flex w-full flex-col">
+              <h6>트레일러 & 티저 영상</h6>
+              <div className="flex py-4 gap-4 rounded-2xl overflow-scroll scrollbar-none max-[1025px]:snap-x max-[1025px]:snap-mandatory">
+                {getYouTube &&
+                  getYouTube.map((el, idx) => (
+                    <iframe
+                      className="rounded-2xl max-[1025px]:w-10/12 aspect-video max-[1025px]:snap-center"
+                      key={idx}
+                      width={490}
+                      src={`https://www.youtube.com/embed/${el.key}`}
+                      title="Teaser video"
+                      frameborder="0"
+                    ></iframe>
+                  ))}
+              </div>
+            </div>
+            <div className="py-8 flex w-full flex-col">
+              <h6>출연진</h6>
+              <div className="flex overflow-scroll scrollbar-none py-4 gap-4">
+                {hasProfileImg.map((el) => (
+                  <div className="w-40" key={el.id}>
+                    <img
+                      className="aspect-[2/3] min-w-32 rounded-2xl"
+                      height={120}
+                      src={`${details.baseUrl}${el.profile_path}`}
+                      alt="cast profile image"
+                    />
+                    <div className="py-1">
+                      <p className="">{el.character}</p>
+                      <p className="text-gray-400">{el.name}</p>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-            <div></div>
           </article>
         </article>
       )}

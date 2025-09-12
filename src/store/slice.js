@@ -15,6 +15,7 @@ export const movieListSlice = createSlice({
     baseUrl: "https://image.tmdb.org/t/p/w300",
     popular: { data: [] },
     nowPlaying: { data: [] },
+    koreaMade: { data: [] },
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -32,7 +33,7 @@ export const movieListSlice = createSlice({
       .addCase(fetchMovieList.fulfilled, (state, action) => {
         console.log("succeeded");
         state.status = "succeeded";
-        state.upComing = action.payload.upComing;
+        state.koreaMade = action.payload.koreaMade;
         state.popular = action.payload.popular;
         state.nowPlaying = action.payload.nowPlaying;
       });

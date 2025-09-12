@@ -78,9 +78,9 @@ export const Layout = () => {
 
       <div className="pt-16 max-[1025px]:pt-10 min-[2048px]:pt-32">
         <Outlet />
-        <footer className="relative border-t text-gray-500 text-base max-[513px]:text-sm bottom-0 flex flex-col justify-center items-start px-6 max-[513px]:px-3 py-6 max-[513px]:py-3 mb-2">
+        <footer className="relative border-t text-gray-500 text-base max-[513px]:text-sm bottom-0 flex flex-col justify-center items-start px-6 max-[513px]:px-3 py-6 max-[513px]:py-3 mb-2 before:h-4/5 before:absolute before:left-2 before:content-[''] before:pr-0.5 before:mr-1.5 before:bg-white">
           <Link
-            className="flex justify-center items-center hover:text-white active:text-white"
+            className="flex justify-center items-center hover:text-white active:text-white "
             to={"https://github.com/MXNKXNG"}
           >
             <img
@@ -90,10 +90,10 @@ export const Layout = () => {
             />
             GitHub
           </Link>
-          <p className="pl-1 hover:text-white active:text-white">
+          <p className="pl-1 hover:text-white active:text-white ">
             oldscratch.co@gmail.com
           </p>
-          <div className="absolute left-3 max-[513px]:left-1.5  w-[1px] max-[513px]:w-[0.5px] h-9/12  bg-white"></div>
+          {/* <div className="absolute left-3 max-[513px]:left-1.5  w-[1px] max-[513px]:w-[0.5px] h-9/12  bg-white"></div> */}
         </footer>
       </div>
 
