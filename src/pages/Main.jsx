@@ -19,6 +19,7 @@ export const Main = () => {
     upComingData.status,
     upComingData.upComing.data
   );
+  const popularTop = movieData.popular?.data?.slice(0, 10);
 
   const containerRef = useRef(null);
   const today = dayjs().startOf("day");
@@ -51,7 +52,7 @@ export const Main = () => {
   ]);
 
   return (
-    <main className="flex flex-col h-full gap-4 pb-10 select-none text-white font-semibold text-xl min-[2048px]:text-3xl animate-fade-in max-[513px]:text-lg bg-radial-[at_15%_10%] from-[#1f202d] to-[#060c18] to-30%">
+    <main className="flex flex-col h-full gap-6 max-[1025px]:gap-2 pb-10 text-white font-semibold text-xl min-[2048px]:text-3xl animate-fade-in max-[513px]:text-lg bg-radial-[at_15%_10%] from-[#1f202d] to-[#060c18] to-30%">
       {/* Up Coming List */}
       <section
         ref={containerRef}
@@ -84,9 +85,9 @@ export const Main = () => {
       {/* Now Playing List */}
       <article className="flex flex-col z-20 pl-8 pr-2.5 max-[513px]:pl-1.5 max-[1025px]:pl-3.5">
         <h1 className=" w-full px-1" aria-label="category name">
-          상영 중인 영화
+          현재 상영 중인 영화
         </h1>
-        <div className="flex gap-5 max-[513px]:gap-2.5 py-3 min-[2048px]:py-8 overflow-x-auto scrollbar-none ">
+        <div className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none ">
           {isNowLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
                 <MovieCardSkeleton className="w-50" idx={idx} key={idx} />
@@ -99,15 +100,15 @@ export const Main = () => {
 
       {/* Popular List */}
       <article className="flex flex-col z-20 pl-8 pr-2.5 max-[513px]:pl-1.5 max-[1025px]:pl-3.5">
-        <h1 className="w-full px-1" aria-label="category name">
-          인기 있는 영화
+        <h1 className="w-full px-1  " aria-label="category name">
+          인기 영화 TOP 10
         </h1>
-        <div className="flex gap-5 max-[513px]:gap-2.5  py-3 min-[2048px]:py-8 overflow-x-auto scrollbar-none ">
+        <div className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none  overflow-y-hidden">
           {isPopularLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
                 <MovieCardSkeleton className="w-50" idx={idx} key={idx} />
               ))
-            : movieData.popular.data?.map((el, idx) => (
+            : popularTop.map((el, idx) => (
                 <MovieCard
                   el={el}
                   variant="popular"
@@ -115,6 +116,22 @@ export const Main = () => {
                   baseUrl={movieData.baseUrl}
                   key={el.id}
                 />
+              ))}
+        </div>
+      </article>
+
+      {/* Korea Made List */}
+      <article className="flex flex-col z-20 pl-8 pr-2.5 max-[513px]:pl-1.5 max-[1025px]:pl-3.5">
+        <h1 className="w-full px-1" aria-label="category name">
+          한국 제작 영화
+        </h1>
+        <div className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none ">
+          {isPopularLoad
+            ? Array.from({ length: 20 }).map((_, idx) => (
+                <MovieCardSkeleton className="w-50" idx={idx} key={idx} />
+              ))
+            : movieData.koreaMade.data?.map((el) => (
+                <MovieCard el={el} baseUrl={movieData.baseUrl} key={el.id} />
               ))}
         </div>
       </article>

@@ -17,7 +17,12 @@ export const Home = () => {
   return (
     <section className="h-dvh flex flex-col justify-center items-center ">
       <Link className="p-4 text-white animate-logo" to="/main">
-        <img src={logo} width={140} alt="logo image" />
+        <img
+          className="min-[2048px]:w-80 min-[1024px]:w-60"
+          src={logo}
+          width={160}
+          alt="logo image"
+        />
       </Link>
     </section>
   );

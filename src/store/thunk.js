@@ -28,30 +28,40 @@ export const fetchMovieList = createAsyncThunk(
       signal,
     };
 
-    const nowPlayingURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=popularity.desc&vote_count.gte=50&with_origin_country=KR|US|JP|GB|CA|AU|NZ|HK|TW|CN|FR|DE|ES|IT|NL|BE|SE|NO|DK|FI&with_release_type=2|3`;
-    const popularURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=vote_count.desc&vote_count.gte=600&with_origin_country=KR|US|JP|GB|CA|AU|NZ|HK|TW|CN|FR|DE|ES|IT|NL|BE|SE|NO|DK|FI&with_release_type=2|3`;
+    const nowPlayingURL = `https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=${page}`;
+    const popularURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&primary_release_date.gte=${minDate}&primary_release_date.lte=${maxDate}&region=KR&sort_by=vote_count.desc&vote_count.gte=500&with_origin_country=KR|US|JP|GB|CA|AU|NZ|HK|TW|CN|FR|DE|ES|IT|NL|BE|SE|NO|DK|FI&with_release_type=2|3`;
+    const koreaMadeURL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=${page}&region=KR&release_date.gte=${minDate}&release_date.lte=${maxDate}&sort_by=popularity.desc&watch_region=KR&with_origin_country=KR&with_original_language=ko`;
 
     try {
-      const [popularRes, nowPlayingRes] = await Promise.all([
+      const [popularRes, nowPlayingRes, koreaMadeRes] = await Promise.all([
         fetch(popularURL, { ...options }),
         fetch(nowPlayingURL, { ...options }),
+        fetch(koreaMadeURL, { ...options }),
       ]);
 
       if (!popularRes.ok || !nowPlayingRes.ok) {
         throw new Error("요청 실패");
       }
 
-      const [popularJson, nowPlayingJson] = await Promise.all([
+      const [popularJson, nowPlayingJson, koreaMadeJson] = await Promise.all([
         popularRes.json(),
         nowPlayingRes.json(),
+        koreaMadeRes.json(),
       ]);
+
+      const nowPlayingFiltered = nowPlayingJson.results.filter(
+        (el) => el.adult === false
+      );
 
       return {
         popular: {
           data: shapeData(popularJson),
         },
         nowPlaying: {
-          data: shapeData(nowPlayingJson),
+          data: shapeData({ results: nowPlayingFiltered }),
+        },
+        koreaMade: {
+          data: shapeData(koreaMadeJson),
         },
       };
     } catch (e) {
