@@ -161,7 +161,7 @@ export const Detail = memo(() => {
               <h6>트레일러 & 티저 영상</h6>
               <div className="flex py-4 gap-4 rounded-2xl overflow-scroll scrollbar-none max-[1025px]:snap-x max-[1025px]:snap-mandatory">
                 {getYouTube &&
-                  getYouTube.map((el, idx) => (
+                  getYouTube?.map((el, idx) => (
                     <iframe
                       className="rounded-2xl max-[1025px]:w-10/12 aspect-video max-[1025px]:snap-center"
                       key={idx}
@@ -176,7 +176,7 @@ export const Detail = memo(() => {
             <div className="py-8 flex w-full flex-col">
               <h6>출연진</h6>
               <div className="flex overflow-scroll scrollbar-none py-4 gap-4">
-                {hasProfileImg.map((el) => (
+                {hasProfileImg?.map((el) => (
                   <div className="w-40" key={el.id}>
                     <img
                       className="aspect-[2/3] min-w-32 rounded-2xl"
