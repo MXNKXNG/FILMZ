@@ -52,8 +52,7 @@ export const ModalLayout = ({ showModal, onClose, children }) => {
           className={`fixed right-0 h-[70dvh] flex top-0 w-full z-40 transition-all ${
             phase === "enter" ? "animate-fade-in" : "animate-fade-out"
           }
-
-          }`}
+            `}
         >
           <div className="h-full overflow-scroll w-full rounded-b-2xl scrollbar-none ">
             {children}

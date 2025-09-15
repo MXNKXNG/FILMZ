@@ -1,0 +1,105 @@
+import { createContext, use, useEffect, useRef, useState } from "react";
+import { supabase } from "./Supabase";
+
+const SUPABASE = createContext(null);
+
+export const useSupabase = () => {
+  const supabase = use(SUPABASE);
+
+  if (!supabase) {
+    throw new Error("supabase가 초기화 되지 않았습니다.");
+  }
+  return supabase;
+};
+
+export const SupabaseProvider = ({ children }) => {
+  const [session, setSession] = useState(null);
+  const [lastAuthEvent, setLastAuthEvent] = useState(null);
+  const [error, setError] = useState(null);
+  const wasAuthedRef = useRef(false);
+  const initDoneRef = useRef(false);
+
+  // 초기 세션 세팅
+  useEffect(() => {
+    (async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      setSession(session || null);
+      wasAuthedRef.current = !!session;
+      initDoneRef.current = true;
+    })();
+
+    // 변환 감지
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
+      if (!initDoneRef.current) return;
+      setSession(newSession);
+      const now = !!newSession;
+
+      if (!wasAuthedRef.current && now) {
+        setLastAuthEvent("SIGNED_IN");
+      }
+      if (wasAuthedRef.current && !now) {
+        setLastAuthEvent("SIGNED_OUT");
+      }
+      wasAuthedRef.current = now;
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // 회원가입
+  const signUp = async (email, password) => {
+    setError(null);
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      setError(error.message);
+      return { ok: false, error };
+    }
+    return { ok: true, user: data.user };
+  };
+
+  // 로그인
+  const signIn = async (email, password) => {
+    setError(null);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      setError(error.message);
+      return { ok: false, error };
+    }
+    return { ok: true, user: data.user };
+  };
+
+  // 로그아웃
+  const signOut = async () => {
+    setError(null);
+    const { data, error } = await supabase.auth.signOut();
+    if (error) {
+      setError(error.message);
+      return { ok: false, error };
+    }
+    return { ok: true, data };
+  };
+
+  // 이벤트 상태 Clean-up 함수
+  const clearLastAuthEvent = () => setLastAuthEvent(null);
+
+  const value = {
+    session,
+    error,
+    lastAuthEvent,
+    clearLastAuthEvent,
+    signUp,
+    signIn,
+    signOut,
+  };
+  return <SUPABASE value={value}>{children}</SUPABASE>;
+};

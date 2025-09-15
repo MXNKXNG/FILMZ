@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, Outlet, useNavigate, useSearchParams } from "react-router";
 import github from "../assets/GitHub.png";
 import logo from "../assets/logo2.png";
+import profile from "../assets/profile.png";
+import { useSupabase } from "../context/SupabaseContext";
 import { ModalLayout } from "./ModalLayout";
 import { SearchModal } from "./SearchModal";
 
@@ -11,21 +13,67 @@ export const Layout = () => {
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [query, setQuery] = useState("");
+  const { session, lastAuthEvent, signOut, clearLastAuthEvent } = useSupabase();
+  const [successLogIn, setSuccessLogIn] = useState(false);
+  const [successLogOut, setSuccessLogOut] = useState(false);
 
+  // 검색 박스 포커스
   useEffect(() => {
     if (showModal) {
       inputRef.current.focus();
     }
   }, [showModal]);
 
+  // 모달 핸들러
   const modalHandle = () => {
     setShowModal(false);
     setSearchParams({});
   };
 
+  // 세션 여부에 따른 상태 변경
+  useEffect(() => {
+    if (lastAuthEvent === "SIGNED_IN") {
+      setSuccessLogIn(true);
+    }
+    if (lastAuthEvent === "SIGNED_OUT") {
+      setSuccessLogOut(true);
+    }
+    clearLastAuthEvent();
+  }, [lastAuthEvent, clearLastAuthEvent]);
+
+  // 로그인 성공 시
+  useEffect(() => {
+    if (!successLogIn) return;
+    const timer = setTimeout(() => {
+      setSuccessLogIn(false);
+    }, 2000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [successLogIn]);
+
+  // 로그아웃 성공 시
+  useEffect(() => {
+    if (!successLogOut) return;
+    const timer = setTimeout(() => {
+      setSuccessLogOut(false);
+    }, 2000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [successLogOut]);
+
+  // 로그아웃 핸들러
+  const signOutHandler = () => {
+    if (!session) return;
+    signOut();
+  };
+
   return (
     <section>
-      <header className="relative inset-x h-full top-0 text-sm whitespace-nowrap text-white max-[1025px]:text-xs min-[2048px]:text-2xl">
+      <header className="relative inset-x h-full top-0 text-sm whitespace-nowrap text-white max-[1025px]:text-xs min-[2048px]:text-lg">
         <section className="flex fixed z-50 justify-between items-center bg-[#060c18] pl-4 max-[1025px]:pl-0 pr-10 py-5 w-screen h-20 max-[1025px]:h-14 max-[1025px]:px-5 min-[2048px]:h-32">
           {/* 메인 로고 */}
           <article className="shrink-0 pr-4">
@@ -39,11 +87,11 @@ export const Layout = () => {
             </Link>
           </article>
           {/* 검색 & 모달 */}
-          <section className="flex gap-4 w-full justify-end">
+          <section className="flex gap-4 max-[513px]:gap-2.5 w-full justify-end ">
             {showModal && (
               <input
                 ref={inputRef}
-                className="animate-fade-in text-black text-base min-[2048px]:text-2xl w-96 max-[1025px]:w-full h-12 max-[1025px]:h-10 min-[2048px]:h-20 rounded-2xl min-[2048px]:rounded-4xl bg-white px-3 py-2 focus:border-2 border-[#FEE502] outline-none"
+                className="animate-fade-in text-black text-base min-[2048px]:text-2xl w-96 max-[1025px]:w-3/4 h-12 max-[1025px]:h-10 min-[2048px]:h-20 rounded-2xl min-[2048px]:rounded-4xl bg-white px-3 py-2 focus:border-2 border-[#FEE502] outline-none"
                 type="search"
                 name=""
                 id=""
@@ -67,8 +115,16 @@ export const Layout = () => {
             {/* 로그인 & 회원가입 */}
             <section className="flex">
               <ul className="flex justify-center items-center gap-4">
-                <li>
-                  <Link to="/login">로그인</Link>
+                <li onClick={signOutHandler} className="cursor-pointer">
+                  {session ? (
+                    <img
+                      className="min-[1024px]:w-6.5 min-[2048px]:w-8 bg-white  rounded-full"
+                      width={20}
+                      src={profile}
+                    />
+                  ) : (
+                    <Link to="/login">로그인</Link>
+                  )}
                 </li>
               </ul>
             </section>
@@ -96,6 +152,34 @@ export const Layout = () => {
           {/* <div className="absolute left-3 max-[513px]:left-1.5  w-[1px] max-[513px]:w-[0.5px] h-9/12  bg-white"></div> */}
         </footer>
       </div>
+
+      {successLogIn && (
+        <div className="animate-fade-in absolute w-full flex justify-center -top-2 z-50 text-white">
+          <h2 className="py-4 w-1/6 flex justify-center items-center">
+            <span className="text-[24px] mr-1 relative  text-green-500">
+              ✹
+              <span className="text-[8px] text-white font-bold absolute left-[6px] top-[12px]">
+                ✓
+              </span>
+            </span>
+            로그인
+          </h2>
+        </div>
+      )}
+
+      {successLogOut && (
+        <div className="animate-fade-in absolute w-full flex justify-center -top-2 z-50 text-white">
+          <h2 className="py-4 w-1/6 flex justify-center items-center">
+            <span className="text-[24px] mr-1 relative  text-[#a04455]">
+              ✹
+              <span className="text-[8px] text-white font-bold absolute left-[6px] top-[12px]">
+                ✓
+              </span>
+            </span>
+            로그아웃
+          </h2>
+        </div>
+      )}
 
       <ModalLayout showModal={showModal} onClose={modalHandle}>
         <SearchModal
