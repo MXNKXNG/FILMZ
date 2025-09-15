@@ -4,7 +4,7 @@ import { useSupabase } from "../context/SupabaseContext";
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
-  const { signIn, error } = useSupabase();
+  const { signIn } = useSupabase();
   const navigate = useNavigate();
   const confirmEmail = /\S+@\S+\.\S+/.test(email);
   const confirmLogin = confirmEmail && pw.length >= 6;

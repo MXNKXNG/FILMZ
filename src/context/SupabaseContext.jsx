@@ -1,8 +1,9 @@
 import { createContext, use, useEffect, useRef, useState } from "react";
-import { supabase } from "./Supabase";
+import { supabase } from "./supabase";
 
 const SUPABASE = createContext(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSupabase = () => {
   const supabase = use(SUPABASE);
 

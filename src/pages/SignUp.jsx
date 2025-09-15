@@ -6,7 +6,7 @@ export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
-  const { signUp, error } = useSupabase();
+  const { signUp } = useSupabase();
   const [success, setSuccess] = useState(false);
   const [userInfo, setUserInfo] = useState("");
 
