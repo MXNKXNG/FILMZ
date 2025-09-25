@@ -114,11 +114,12 @@ export const Layout = () => {
 
             {/* 로그인 & 회원가입 */}
             <section className="flex">
-              <ul className="flex justify-center items-center gap-4">
-                <li onClick={signOutHandler} className="cursor-pointer">
+              <ul className="flex justify-center items-center gap-4 z-50">
+                <li>
                   {session ? (
                     <img
-                      className="min-[1024px]:w-6.5 min-[2048px]:w-8 bg-white  rounded-full"
+                      onClick={signOutHandler}
+                      className="cursor-pointer min-[1024px]:w-6.5 min-[2048px]:w-8 bg-white  rounded-full"
                       width={20}
                       src={profile}
                     />
@@ -154,30 +155,16 @@ export const Layout = () => {
       </div>
 
       {successLogIn && (
-        <div className="animate-fade-in absolute w-full flex justify-center -top-2 z-50 text-white">
-          <h2 className="py-4 w-1/6 flex justify-center items-center">
-            <span className="text-[24px] mr-1 relative  text-green-500">
-              ✹
-              <span className="text-[8px] text-white font-bold absolute left-[6px] top-[12px]">
-                ✓
-              </span>
-            </span>
-            로그인
-          </h2>
+        <div className="animate-fade-in absolute w-full flex justify-center items-center max-[513px]:top-0 top-2 min-[2048px]:top-8 min-[2048px]:text-lg z-50 text-white text-nowrap">
+          <span className="relative text-green-500">✔︎</span>
+          <h2 className="py-4 px-1.5 flex justify-center">로그인</h2>
         </div>
       )}
 
       {successLogOut && (
-        <div className="animate-fade-in absolute w-full flex justify-center -top-2 z-50 text-white">
-          <h2 className="py-4 w-1/6 flex justify-center items-center">
-            <span className="text-[24px] mr-1 relative  text-[#a04455]">
-              ✹
-              <span className="text-[8px] text-white font-bold absolute left-[6px] top-[12px]">
-                ✓
-              </span>
-            </span>
-            로그아웃
-          </h2>
+        <div className="animate-fade-in absolute w-full flex justify-center items-center max-[513px]:top-0 top-2 min-[2048px]:top-8 min-[2048px]:text-lg z-50 text-white text-nowrap">
+          <span className="relative text-[#a04455]">✔︎</span>
+          <h2 className="py-4 px-1.5 flex justify-center">로그아웃</h2>
         </div>
       )}
 

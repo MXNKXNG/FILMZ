@@ -21,7 +21,7 @@ export const Login = () => {
 
   return (
     <section className="h-dvh flex justify-center items-center text-white animate-fade-in text-base max-[513px]:text-xs min-[1024px]:text-sm min-[2048px]:text-xl">
-      <article className="aspect-square h-1/2 flex flex-col justify-center items-center w-120 max-[513px]:w-56 max-[1025px]:w-80">
+      <article className="aspect-square h-1/2 flex flex-col justify-center items-center w-120 max-[513px]:w-3/4 max-[1025px]:w-80">
         {/* 아이디 영역 */}
 
         <div className="relative top-0.5 w-full">

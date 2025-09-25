@@ -32,7 +32,7 @@ export const SignUp = () => {
   return (
     <section className="h-dvh flex justify-center items-center text-sm min-[2048px]:text-xl text-white animate-fade-in">
       {!success ? (
-        <article className="aspect-square h-1/2 flex flex-col gap-4 justify-center items-center w-120 max-[513px]:w-56 max-[1025px]:w-80">
+        <article className="aspect-square h-1/2 flex flex-col gap-4 justify-center items-center w-120 max-[513px]:w-3/4 max-[1025px]:w-80">
           {/* 아이디 영역 */}
           <div className="relative w-full">
             <label className=" flex-col items-center" htmlFor="email">

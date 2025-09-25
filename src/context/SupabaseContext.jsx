@@ -84,6 +84,7 @@ export const SupabaseProvider = ({ children }) => {
     setError(null);
     const { data, error } = await supabase.auth.signOut();
     if (error) {
+      await supabase.auth.signOut({ scope: "local" });
       setError(error.message);
       return { ok: false, error };
     }
