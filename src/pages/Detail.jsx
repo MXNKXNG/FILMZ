@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { MovieCardSkeleton } from "../components/MovieCardSkeleton";
@@ -14,6 +14,7 @@ export const Detail = memo(() => {
   const castRef = useRef(null);
   const subImgRef = useRef(null);
   const videoRef = useRef(null);
+  const [active, setActive] = useState(0);
   const details = useSelector((state) => state.details);
   const filteredLogo =
     details.data?.images?.logos?.find((el) => el.iso_639_1 === "ko") ??
@@ -32,14 +33,25 @@ export const Detail = memo(() => {
     dispatch(fetchDetails(Number(param.id)));
   }, [dispatch, param]);
 
-  useEffect(() => {
-    const el = castRef.current;
-    console.log(el.scrollWidth, el.clientWidth);
-  }, [castRef]);
-
+  // 가로 스크롤 컨테이너 이벤트 핸들러
   useDragScroll(castRef, { axis: "x" });
   useDragScroll(subImgRef, { axis: "x" });
   useDragScroll(videoRef, { axis: "x" });
+
+  // Video 도트 클릭 핸들러
+  const choiceVideoHandle = (idx) => {
+    const track = videoRef.current;
+    if (!track) return;
+    const target = track.children[idx];
+    if (!target) return;
+
+    target.scrollIntoView({
+      behavior: "smooth",
+      inline: "start",
+      block: "nearest",
+    });
+    setActive(idx);
+  };
 
   return (
     <section className="flex h-full pb-40 flex-col items-center justify-center text-pretty animate-fade-in px-40 max-[513px]:px-4 max-[1025px]:px-16 bg-radial-[at_5%_15%] from-[#413137] via-[#2c1818] to-[#1b0d0d]">
@@ -183,13 +195,27 @@ export const Detail = memo(() => {
                 {getYouTube &&
                   getYouTube?.map((el, idx) => (
                     <iframe
-                      className="rounded-2xl max-[1025px]:w-10/12 aspect-video max-[1025px]:snap-center"
+                      className="rounded-2xl max-[1025px]:w-full w-9/12 aspect-video max-[1025px]:snap-center"
                       key={idx}
                       width={490}
                       src={`https://www.youtube.com/embed/${el.key}`}
                       title="Teaser video"
                       draggable={false}
                     ></iframe>
+                  ))}
+              </div>
+
+              {/* 도트 */}
+              <div className="flex justify-center gap-6">
+                {getYouTube &&
+                  getYouTube?.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => choiceVideoHandle(idx)}
+                      className={`w-4 aspect-square rounded-full cursor-pointer ${
+                        active === idx ? "bg-white" : "bg-white/40"
+                      }`}
+                    ></button>
                   ))}
               </div>
             </div>

@@ -25,17 +25,23 @@ export const Banner = memo(({ el, baseUrl, containerRef, diff }) => {
     }
   };
 
+  console.log(el);
+
   return (
     <article
       ref={articleRef}
       className="relative w-dvw p-8 max-[513px]:p-1.5 max-[1025px]:p-3.5 snap-center text-base text-pretty"
     >
       <figure className="w-[96dvw] max-[513px]:w-[90dvw] max-[1025px]:w-[94dvw] flex justify-center items-center">
-        <img
-          className="aspect-[16/9] rounded-2xl"
-          src={`${baseUrl}${el.backdrop_path}`}
-          alt="up-coming movie"
-        />
+        {el.backdrop_path ? (
+          <img
+            className="aspect-[16/9] rounded-2xl"
+            src={`${baseUrl}${el.backdrop_path}`}
+            alt="up-coming movie"
+          />
+        ) : (
+          "이미지 정보가 없습니다."
+        )}
       </figure>
       {/* 텍스트 영역 */}
       <section className="absolute flex flex-col justify-end max-[1025px]:h-36 bottom-16 max-[1025px]:bottom-4 min-[2048px]:bottom-40 left-1/12 py-3 w-3/4 pr-4 ">
