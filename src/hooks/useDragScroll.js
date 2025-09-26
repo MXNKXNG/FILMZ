@@ -10,7 +10,7 @@ export const useDragScroll = (ref, { axis = "x" } = {}) => {
     // 마우스 드래그 시작
     const handlePointerDown = (e) => {
       state.current.isDown = true;
-      el.classList.add("dragging");
+      el.classList.add("cursor-grabbing");
 
       if (axis === "x") {
         state.current.startPos = e.clientX;
@@ -42,7 +42,7 @@ export const useDragScroll = (ref, { axis = "x" } = {}) => {
       if (!state.current.isDown) return;
 
       state.current.isDown = false;
-      el.classList.remove("dragging");
+      el.classList.remove("cursor-grabbing");
       el.releasePointerCapture?.(e.pointerId);
     };
 
