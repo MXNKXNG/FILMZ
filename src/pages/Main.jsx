@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Banner } from "../components/Banner";
 import { MovieCard } from "../components/MovieCard";
 import { MovieCardSkeleton } from "../components/MovieCardSkeleton";
+import { useDragScroll } from "../hooks/useDragScroll";
 import { fetchMovieList, fetchUpComingList } from "../store/thunk";
 import { date } from "../utils/dataFilter";
 import { loadFlag } from "../utils/loadingFlag";
@@ -20,12 +21,18 @@ export const Main = () => {
     upComingData.upComing.data
   );
   const popularTop = movieData.popular?.data?.slice(0, 10);
-
-  const containerRef = useRef(null);
+  // UpComing Day 계산을 위한 오늘 날짜
   const today = dayjs().startOf("day");
 
   // 영화 개봉 기간 필터
   const { upComing, nowPopular } = date;
+
+  // Upcoming 배너
+  const containerRef = useRef(null);
+  // 각 가로 스크롤 컨테이너
+  const nowRef = useRef(null);
+  const popularRef = useRef(null);
+  const koreaRef = useRef(null);
 
   useEffect(() => {
     dispatch(
@@ -50,6 +57,10 @@ export const Main = () => {
     upComing.minDate,
     upComing.maxDate,
   ]);
+
+  useDragScroll(nowRef, { axis: "x" });
+  useDragScroll(popularRef, { axis: "x" });
+  useDragScroll(koreaRef, { axis: "x" });
 
   return (
     <main className="flex flex-col h-full gap-6 max-[1025px]:gap-2 pb-10 text-white font-semibold text-xl min-[2048px]:text-3xl animate-fade-in max-[513px]:text-lg bg-radial-[at_15%_10%] from-[#1f202d] to-[#060c18] to-30%">
@@ -87,7 +98,10 @@ export const Main = () => {
         <h1 className=" w-full px-1" aria-label="category name">
           현재 상영 중인 영화
         </h1>
-        <div className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none ">
+        <div
+          ref={nowRef}
+          className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none cursor-grab touch-pan-y"
+        >
           {isNowLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
                 <MovieCardSkeleton className="w-50" idx={idx} key={idx} />
@@ -103,7 +117,10 @@ export const Main = () => {
         <h1 className="w-full px-1  " aria-label="category name">
           인기 영화 TOP 10
         </h1>
-        <div className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none  overflow-y-hidden">
+        <div
+          ref={popularRef}
+          className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none overflow-y-hidden cursor-grab touch-pan-y"
+        >
           {isPopularLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
                 <MovieCardSkeleton className="w-50" idx={idx} key={idx} />
@@ -125,7 +142,10 @@ export const Main = () => {
         <h1 className="w-full px-1" aria-label="category name">
           한국 제작 영화
         </h1>
-        <div className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none ">
+        <div
+          ref={koreaRef}
+          className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none cursor-grab touch-pan-y"
+        >
           {isPopularLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
                 <MovieCardSkeleton className="w-50" idx={idx} key={idx} />
