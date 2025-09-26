@@ -57,7 +57,6 @@ export const useDragScroll = (ref, { axis = "x", slop = 6 } = {}) => {
 
       state.current.isDown = false;
       state.current.moved = false;
-      el.classList.remove("pointer-events-none");
       el.releasePointerCapture?.(e.pointerId);
     };
 

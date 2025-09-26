@@ -32,7 +32,7 @@ export const Banner = memo(({ el, baseUrl, containerRef, diff }) => {
     >
       <figure className="w-[96dvw] max-[513px]:w-[90dvw] max-[1025px]:w-[94dvw] flex justify-center items-center">
         <img
-          className="aspect-[16/9] w-3/4 max-[513px]:w-full rounded-2xl"
+          className="aspect-[16/9] rounded-2xl"
           src={`${baseUrl}${el.backdrop_path}`}
           alt="up-coming movie"
         />

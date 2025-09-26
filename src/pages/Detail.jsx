@@ -1,7 +1,8 @@
-import { memo, useEffect } from "react";
+import { memo, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { MovieCardSkeleton } from "../components/MovieCardSkeleton";
+import { useDragScroll } from "../hooks/useDragScroll";
 import { fetchDetails } from "../store/thunk";
 import { DEFAULT_COLOR, GENRE_COLOR } from "../utils/genreColor";
 import { loadFlag } from "../utils/loadingFlag";
@@ -10,6 +11,9 @@ export const Detail = memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const param = useParams();
+  const castRef = useRef(null);
+  const subImgRef = useRef(null);
+  const videoRef = useRef(null);
   const details = useSelector((state) => state.details);
   const filteredLogo =
     details.data?.images?.logos?.find((el) => el.iso_639_1 === "ko") ??
@@ -27,6 +31,15 @@ export const Detail = memo(() => {
   useEffect(() => {
     dispatch(fetchDetails(Number(param.id)));
   }, [dispatch, param]);
+
+  useEffect(() => {
+    const el = castRef.current;
+    console.log(el.scrollWidth, el.clientWidth);
+  }, [castRef]);
+
+  useDragScroll(castRef, { axis: "x" });
+  useDragScroll(subImgRef, { axis: "x" });
+  useDragScroll(videoRef, { axis: "x" });
 
   return (
     <section className="flex h-full pb-40 flex-col items-center justify-center text-pretty animate-fade-in px-40 max-[513px]:px-4 max-[1025px]:px-16 bg-radial-[at_5%_15%] from-[#413137] via-[#2c1818] to-[#1b0d0d]">
@@ -48,7 +61,7 @@ export const Detail = memo(() => {
       {isDetailLoad ? (
         <MovieCardSkeleton className="flex justify-center items-center w-full" />
       ) : (
-        <article className="-z-10 relative w-full h-full flex flex-col text-white rounded-4xl bg-black shadow-[4px_10px_20px_rgba(0,0,0,0.7)] min-[2048px]:px-24 py-14 max-[513px]:px-4 px-16">
+        <article className="relative w-full h-full flex flex-col text-white rounded-4xl bg-black shadow-[4px_10px_20px_rgba(0,0,0,0.7)] min-[2048px]:px-24 py-14 max-[513px]:px-4 px-16">
           {/* 닫기 버튼 */}
           <button
             className="absolute top-5 min-[2048px]:top-8 right-5 h-10 w-10 max-[513px]:w-6 min-[2048px]:w-16 min-[2048px]:h-16 z-20 cursor-pointer hover:scale-110 active:scale-110 duration-300"
@@ -70,7 +83,7 @@ export const Detail = memo(() => {
             </figure>
 
             {/* 뒷 배경 이미지 */}
-            <figure className="absolute top-0 -z-10 left-0 w-full h-full pointer-events-none">
+            <figure className="absolute top-0 left-0 w-full h-full pointer-events-none">
               {(details.data?.backdrop_path && (
                 <img
                   className="aspect-[16/9] w-full object-cover min-[512px]:h-3/4 opacity-15 rounded-t-4xl max-[1025px]:aspect-[2/3]"
@@ -144,22 +157,29 @@ export const Detail = memo(() => {
           </div>
 
           {/* 추가 이미지 & 영상 */}
-          <article className="flex py-16 max-[513px]:py-12 min-[2048px]:py-24 flex-col px-4 text-base min-[1024px]:text-xl min-[2048px]:text-2xl">
+          <article className="flex py-16 max-[513px]:py-12 min-[2048px]:py-24 flex-col px-4 text-base min-[1024px]:text-xl min-[2048px]:text-2xl z-10">
             <h6>추가 이미지</h6>
-            <div className="flex py-4 max-[513px]:py-2 overflow-scroll scrollbar-none">
+            <div
+              ref={subImgRef}
+              className="flex cursor-grab py-4 max-[513px]:py-2 overflow-scroll scrollbar-none"
+            >
               {details.data?.images?.backdrops?.map((el, idx) => (
                 <img
                   className="aspect-video max-[1025px]:w-52"
                   key={idx}
                   width={315}
                   src={`${details.baseUrl}${el.file_path}`}
+                  draggable={false}
                 />
               ))}
             </div>
 
             <div className="py-16 max-[513px]:py-12 min-[2048px]:py-24 flex w-full flex-col">
               <h6>트레일러 & 티저 영상</h6>
-              <div className="flex py-4 max-[513px]:py-2 gap-4 rounded-2xl overflow-scroll scrollbar-none max-[1025px]:snap-x max-[1025px]:snap-mandatory">
+              <div
+                ref={videoRef}
+                className="flex cursor-grab py-4 max-[513px]:py-2 gap-4 rounded-2xl overflow-scroll scrollbar-none max-[1025px]:snap-x max-[1025px]:snap-mandatory"
+              >
                 {getYouTube &&
                   getYouTube?.map((el, idx) => (
                     <iframe
@@ -168,22 +188,28 @@ export const Detail = memo(() => {
                       width={490}
                       src={`https://www.youtube.com/embed/${el.key}`}
                       title="Teaser video"
+                      draggable={false}
                     ></iframe>
                   ))}
               </div>
             </div>
+
             <div className="flex w-full flex-col">
               <h6>출연진</h6>
-              <div className="flex overflow-scroll text-nowrap scrollbar-none py-4 max-[513px]:py-2 gap-14 max-[513px]:gap-8 min-[2048px]:gap-20 text-base max-[1025px]:text-sm max-[513px]:text-xs">
+              <div
+                ref={castRef}
+                className="flex overflow-x-auto cursor-grab text-nowrap scrollbar-none py-4 max-[513px]:py-2 gap-14 max-[513px]:gap-8 min-[2048px]:gap-20 text-base max-[1025px]:text-sm max-[513px]:text-xs"
+              >
                 {hasProfileImg?.map((el) => (
                   <div className="flex" key={el.id}>
                     <img
-                      className="aspect-[2/3] min-w-32 max-[1025px]:min-w-24 max-[513px]:min-w-14 rounded-4xl"
+                      className="aspect-[2/3] min-w-32 max-[1025px]:min-w-24 max-[513px]:min-w-14 rounded-4xl "
                       height={120}
                       src={`${details.baseUrl}${el.profile_path}`}
                       alt="cast profile image"
+                      draggable={false}
                     />
-                    <div className="p-2 flex flex-col justify-center">
+                    <div className="p-2 flex flex-col justify-center select-none">
                       <p className="">{el.character}</p>
                       <p className="text-gray-400 text-sm max-[1025px]:text-xs max-[513px]:text-[10px]">
                         {el.name}

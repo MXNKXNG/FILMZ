@@ -100,7 +100,7 @@ export const Main = () => {
         </h1>
         <div
           ref={nowRef}
-          className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none cursor-grab touch-pan-y"
+          className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none cursor-grab"
         >
           {isNowLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
@@ -119,7 +119,7 @@ export const Main = () => {
         </h1>
         <div
           ref={popularRef}
-          className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none overflow-y-hidden cursor-grab touch-pan-y"
+          className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none overflow-y-hidden cursor-grab"
         >
           {isPopularLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
@@ -144,7 +144,7 @@ export const Main = () => {
         </h1>
         <div
           ref={koreaRef}
-          className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none cursor-grab touch-pan-y"
+          className="flex py-4 min-[2048px]:py-8 overflow-x-auto scrollbar-none cursor-grab"
         >
           {isPopularLoad
             ? Array.from({ length: 20 }).map((_, idx) => (
