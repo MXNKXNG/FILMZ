@@ -1,5 +1,6 @@
 import { memo, useRef } from "react";
 import { Link } from "react-router";
+import backdrop from "../assets/backdrop.png";
 
 export const Banner = memo(({ el, baseUrl, containerRef, diff }) => {
   const articleRef = useRef(null);
@@ -31,11 +32,15 @@ export const Banner = memo(({ el, baseUrl, containerRef, diff }) => {
       className="relative w-dvw p-8 max-[513px]:p-1.5 max-[1025px]:p-3.5 snap-center text-base text-pretty"
     >
       <figure className="w-[96dvw] max-[513px]:w-[90dvw] max-[1025px]:w-[94dvw] flex justify-center items-center">
-        <img
-          className="aspect-[16/9] w-3/4 max-[513px]:w-full rounded-2xl"
-          src={`${baseUrl}${el.backdrop_path}`}
-          alt="up-coming movie"
-        />
+        {el.backdrop_path ? (
+          <img
+            className="aspect-video rounded-2xl"
+            src={`${baseUrl}${el.backdrop_path}`}
+            alt="up-coming movie"
+          />
+        ) : (
+          <img src={backdrop} className="aspect-video rounded-2xl" />
+        )}
       </figure>
       {/* 텍스트 영역 */}
       <section className="absolute flex flex-col justify-end max-[1025px]:h-36 bottom-16 max-[1025px]:bottom-4 min-[2048px]:bottom-40 left-1/12 py-3 w-3/4 pr-4 ">

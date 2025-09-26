@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { Link } from "react-router";
+import Empty from "../assets/poster.png";
 
 export const MovieCard = memo(({ el, baseUrl, idx, variant = "defalut" }) => {
   const ispopular = variant === "popular";
@@ -16,18 +17,28 @@ export const MovieCard = memo(({ el, baseUrl, idx, variant = "defalut" }) => {
         </p>
       )}
       <Link
-        className="hover:scale-105 active:scale-105 duration-300"
+        className="hover:scale-105 active:scale-105 duration-300 group"
         to={`/main/${el.id}`}
       >
-        <figure className=" relative flex w-50 max-[513px]:w-40 min-[2048px]:w-80">
-          <img
-            className="aspect-[2/3] object-cover rounded-2xl"
-            src={`${baseUrl}${el.poster_path}`}
-            alt="movie main poster"
-          />
+        <figure className="relative flex w-50 max-[513px]:w-40 min-[2048px]:w-80">
+          {el.poster_path ? (
+            <img
+              className="aspect-[2/3] object-cover rounded-2xl"
+              src={`${baseUrl}${el.poster_path}`}
+              alt="movie main poster"
+              draggable={false}
+            />
+          ) : (
+            <img
+              className="aspect-[2/3] object-cover rounded-2xl"
+              src={Empty}
+              alt="movie main poster"
+              draggable={false}
+            />
+          )}
 
           {/* hover 박스 */}
-          <section className="absolute w-full h-full p-1 flex flex-col justify-start text-pretty items-center py-12 max-[513px]:py-10 text-white bg-black/60 rounded-2xl opacity-0 hover:opacity-100 active:opacity-100 transition-opacity duration-500">
+          <section className="pointer-events-none absolute w-full h-full p-1 flex flex-col justify-start text-pretty items-center py-12 max-[513px]:py-10 text-white bg-black/60 rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-500">
             <p
               className="absolute top-2 right-2 w-7 h-5 rounded-md text-xs min-[2048px]:w-12 min-[2048px]:h-8 min-[2048px]:right-8 min-[2048px]:rounded-xl text-black bg-[#FEE502] min-[2048px]:text-lg font-semibold flex justify-center items-center"
               aria-label="average"
