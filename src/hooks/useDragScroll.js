@@ -9,7 +9,7 @@ export const useDragScroll = (ref, { axis = "x", slop = 6 } = {}) => {
   });
 
   useEffect(() => {
-    const el = ref.current;
+    const el = ref?.current;
     if (!el) return;
 
     // 마우스 드래그 시작
@@ -73,11 +73,13 @@ export const useDragScroll = (ref, { axis = "x", slop = 6 } = {}) => {
 
     return () => {
       el.removeEventListener("pointerdown", handlePointerDown);
-      el.removeEventListener("pointermove", handlePointerMove);
+      el.removeEventListener("pointermove", handlePointerMove, {
+        passive: false,
+      });
       el.removeEventListener("pointerup", handlePointerUp);
       el.removeEventListener("pointerleave", handlePointerUp);
       el.removeEventListener("pointercancel", handlePointerUp);
       el.removeEventListener("dragstart", handleDragStart);
     };
-  }, [ref, axis, slop]);
+  }, [ref?.current, axis, slop]);
 };
