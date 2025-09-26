@@ -1,5 +1,6 @@
 import { memo, useRef } from "react";
 import { Link } from "react-router";
+import emptyImg from "../assets/Empty.png";
 
 export const Banner = memo(({ el, baseUrl, containerRef, diff }) => {
   const articleRef = useRef(null);
@@ -35,12 +36,12 @@ export const Banner = memo(({ el, baseUrl, containerRef, diff }) => {
       <figure className="w-[96dvw] max-[513px]:w-[90dvw] max-[1025px]:w-[94dvw] flex justify-center items-center">
         {el.backdrop_path ? (
           <img
-            className="aspect-[16/9] rounded-2xl"
+            className="aspect-video rounded-2xl"
             src={`${baseUrl}${el.backdrop_path}`}
             alt="up-coming movie"
           />
         ) : (
-          "이미지 정보가 없습니다."
+          <img src={emptyImg} className="aspect-video rounded-2xl" />
         )}
       </figure>
       {/* 텍스트 영역 */}
