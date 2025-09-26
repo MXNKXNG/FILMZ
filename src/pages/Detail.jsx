@@ -1,6 +1,7 @@
 import { memo, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
+import Empty from "../assets/poster.png";
 import { MovieCardSkeleton } from "../components/MovieCardSkeleton";
 import { useDragScroll } from "../hooks/useDragScroll";
 import { fetchDetails } from "../store/thunk";
@@ -91,7 +92,13 @@ export const Detail = memo(() => {
                   src={`${details.baseUrl}${details.data?.poster_path}`}
                   alt="Movie main poster"
                 />
-              )) || <p>{details.data?.status_message}</p>}
+              )) || (
+                <img
+                  className="aspect-[2/3] object-cover rounded-3xl z-10"
+                  src={Empty}
+                  alt="Movie main poster"
+                />
+              )}
             </figure>
 
             {/* 뒷 배경 이미지 */}
@@ -169,7 +176,7 @@ export const Detail = memo(() => {
           </div>
 
           {/* 추가 이미지 & 영상 */}
-          <article className="flex py-16 max-[513px]:py-12 min-[2048px]:py-24 flex-col px-4 text-base min-[1024px]:text-xl min-[2048px]:text-2xl z-10">
+          <article className="flex cursor-grab [&.is-dragging]:cursor-grabbing py-16 max-[513px]:py-12 min-[2048px]:py-24 flex-col px-4 text-base min-[1024px]:text-xl min-[2048px]:text-2xl z-10">
             <h6>추가 이미지</h6>
             <div
               ref={subImgRef}
@@ -177,7 +184,7 @@ export const Detail = memo(() => {
             >
               {details.data?.images?.backdrops?.map((el, idx) => (
                 <img
-                  className="aspect-video max-[1025px]:w-52"
+                  className="aspect-video max-[1025px]:w-52 w-72 min-[2024px]:w-96"
                   key={idx}
                   width={315}
                   src={`${details.baseUrl}${el.file_path}`}
@@ -195,7 +202,7 @@ export const Detail = memo(() => {
                 {getYouTube &&
                   getYouTube?.map((el, idx) => (
                     <iframe
-                      className="rounded-2xl max-[1025px]:w-full w-9/12 aspect-video max-[1025px]:snap-center"
+                      className="rounded-2xl max-[1025px]:w-full w-9/12 min-[2024px]:w-3/5 aspect-video max-[1025px]:snap-center"
                       key={idx}
                       width={490}
                       src={`https://www.youtube.com/embed/${el.key}`}
@@ -224,12 +231,12 @@ export const Detail = memo(() => {
               <h6>출연진</h6>
               <div
                 ref={castRef}
-                className="flex overflow-x-auto cursor-grab text-nowrap scrollbar-none py-4 max-[513px]:py-2 gap-14 max-[513px]:gap-8 min-[2048px]:gap-20 text-base max-[1025px]:text-sm max-[513px]:text-xs"
+                className="flex overflow-x-auto cursor-grab [&.is-dragging]:cursor-grabbing text-nowrap scrollbar-none py-4 max-[513px]:py-2 gap-14 max-[513px]:gap-8 min-[2048px]:gap-20 text-base max-[1025px]:text-sm max-[513px]:text-xs"
               >
                 {hasProfileImg?.map((el) => (
                   <div className="flex" key={el.id}>
                     <img
-                      className="aspect-[2/3] min-w-32 max-[1025px]:min-w-24 max-[513px]:min-w-14 rounded-4xl "
+                      className="aspect-[2/3] min-w-32 max-[1025px]:min-w-24 max-[513px]:min-w-14 min-[2024px]:min-w-40 rounded-4xl "
                       height={120}
                       src={`${details.baseUrl}${el.profile_path}`}
                       alt="cast profile image"

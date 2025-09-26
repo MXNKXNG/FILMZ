@@ -41,6 +41,7 @@ export const useDragScroll = (ref, { axis = "x", slop = 6 } = {}) => {
       if (!state.current.moved && Math.abs(delta) >= slop) {
         state.current.moved = true;
         el.setPointerCapture?.(e.pointerId);
+        el.classList.add("is-dragging");
       }
 
       if (axis === "x") {
@@ -58,6 +59,7 @@ export const useDragScroll = (ref, { axis = "x", slop = 6 } = {}) => {
       state.current.isDown = false;
       state.current.moved = false;
       el.releasePointerCapture?.(e.pointerId);
+      el.classList.remove("is-dragging");
     };
 
     const handleDragStart = (e) => {

@@ -1,6 +1,6 @@
 import { memo, useRef } from "react";
 import { Link } from "react-router";
-import emptyImg from "../assets/Empty.png";
+import backdrop from "../assets/backdrop.png";
 
 export const Banner = memo(({ el, baseUrl, containerRef, diff }) => {
   const articleRef = useRef(null);
@@ -41,7 +41,7 @@ export const Banner = memo(({ el, baseUrl, containerRef, diff }) => {
             alt="up-coming movie"
           />
         ) : (
-          <img src={emptyImg} className="aspect-video rounded-2xl" />
+          <img src={backdrop} className="aspect-video rounded-2xl" />
         )}
       </figure>
       {/* 텍스트 영역 */}

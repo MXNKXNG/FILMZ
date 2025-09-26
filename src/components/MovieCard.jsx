@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { Link } from "react-router";
+import Empty from "../assets/poster.png";
 
 export const MovieCard = memo(({ el, baseUrl, idx, variant = "defalut" }) => {
   const ispopular = variant === "popular";
@@ -20,12 +21,21 @@ export const MovieCard = memo(({ el, baseUrl, idx, variant = "defalut" }) => {
         to={`/main/${el.id}`}
       >
         <figure className="relative flex w-50 max-[513px]:w-40 min-[2048px]:w-80">
-          <img
-            className="aspect-[2/3] object-cover rounded-2xl"
-            src={`${baseUrl}${el.poster_path}`}
-            alt="movie main poster"
-            draggable={false}
-          />
+          {el.poster_path ? (
+            <img
+              className="aspect-[2/3] object-cover rounded-2xl"
+              src={`${baseUrl}${el.poster_path}`}
+              alt="movie main poster"
+              draggable={false}
+            />
+          ) : (
+            <img
+              className="aspect-[2/3] object-cover rounded-2xl"
+              src={Empty}
+              alt="movie main poster"
+              draggable={false}
+            />
+          )}
 
           {/* hover 박스 */}
           <section className="pointer-events-none absolute w-full h-full p-1 flex flex-col justify-start text-pretty items-center py-12 max-[513px]:py-10 text-white bg-black/60 rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-500">
