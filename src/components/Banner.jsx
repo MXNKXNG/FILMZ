@@ -26,8 +26,6 @@ export const Banner = memo(({ el, baseUrl, containerRef, diff }) => {
     }
   };
 
-  console.log(el);
-
   return (
     <article
       ref={articleRef}
