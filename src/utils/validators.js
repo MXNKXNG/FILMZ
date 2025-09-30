@@ -21,3 +21,13 @@ export const signUpSchema = z
     path: ["confirmPw"],
     message: "비밀번호가 일치하지 않습니다.",
   });
+
+// 로그인 스키마
+export const signInSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email("올바른 이메일 형식을 입력하세요."),
+  pw: z.string().min(1, "비밀번호를 입력하세요."),
+});
