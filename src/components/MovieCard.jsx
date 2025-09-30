@@ -38,19 +38,19 @@ export const MovieCard = memo(({ el, baseUrl, idx, variant = "defalut" }) => {
           )}
 
           {/* hover 박스 */}
-          <section className="pointer-events-none absolute w-full h-full p-1 flex flex-col justify-start text-pretty items-center py-12 max-[513px]:py-10 text-white bg-black/60 rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-500">
+          <section className="pointer-events-none absolute w-full h-full p-1 flex flex-col justify-start text-pretty items-center py-12 min-[2048px]:py-[124px] max-[513px]:py-10 text-white bg-black/60 rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-500">
             <p
-              className="absolute top-2 right-2 w-7 h-5 rounded-md text-xs min-[2048px]:w-12 min-[2048px]:h-8 min-[2048px]:right-8 min-[2048px]:rounded-xl text-black bg-[#FEE502] min-[2048px]:text-lg font-semibold flex justify-center items-center"
+              className="absolute top-2 min-[2048px]:top-8 right-2 w-7 h-5 rounded-md text-xs min-[2048px]:w-12 min-[2048px]:h-8 min-[2048px]:right-8 min-[2048px]:rounded-xl text-black bg-[#FEE502] min-[2048px]:text-lg font-semibold flex justify-center items-center"
               aria-label="average"
             >
               {Math.floor(el.vote_average * 10) / 10}
             </p>
 
-            <h2 className="px-2 flex-1 text-xl min-[2048px]:text-2xl max-[513px]:text-base text-center mb-5 max-[513px]:mb-3">
+            <h2 className="px-2 flex-1 text-xl min-[2048px]:text-3xl max-[513px]:text-base text-center mb-5 max-[513px]:mb-3">
               {el.title}
             </h2>
             <figcaption
-              className="flex-2 font-light text-base min-[2048px]:font-normal min-[2048px]:text-lg max-[513px]:text-sm px-2 text-center line-clamp-5"
+              className="flex-2 font-light text-base min-[2048px]:font-normal min-[2048px]:text-xl max-[513px]:text-sm px-2 min-[2048px]:px-6 text-center line-clamp-5"
               aria-label="movie title"
             >
               {el.overview}

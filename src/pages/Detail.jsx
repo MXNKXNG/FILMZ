@@ -37,7 +37,6 @@ export const Detail = memo(() => {
   // 가로 스크롤 컨테이너 이벤트 핸들러
   useDragScroll(castRef, { axis: "x" });
   useDragScroll(subImgRef, { axis: "x" });
-  useDragScroll(videoRef, { axis: "x" });
 
   // Video 도트 클릭 핸들러
   const choiceVideoHandle = (idx) => {
@@ -77,7 +76,7 @@ export const Detail = memo(() => {
         <article className="relative w-full h-full flex flex-col text-white rounded-4xl bg-black shadow-[4px_10px_20px_rgba(0,0,0,0.7)] min-[2048px]:px-24 py-14 max-[513px]:px-4 px-16">
           {/* 닫기 버튼 */}
           <button
-            className="absolute top-5 min-[2048px]:top-8 right-5 h-10 w-10 max-[513px]:w-6 min-[2048px]:w-16 min-[2048px]:h-16 z-20 cursor-pointer hover:scale-110 active:scale-110 duration-300"
+            className="absolute top-5 min-[2048px]:top-8 right-5 h-10 w-10 max-[513px]:w-6 min-[2048px]:w-16 min-[2048px]:h-16 z-20 cursor-pointer hover:scale-110 active:scale-90 duration-300"
             onClick={() => navigate("/main")}
           >
             <span className="h-[1px] w-10 max-[513px]:w-6 min-[2048px]:w-16 bg-gray-500 absolute top-5 min-[2048px]:top-8 right-0 rotate-45 z-30"></span>
@@ -85,16 +84,16 @@ export const Detail = memo(() => {
           </button>
           <div className="flex max-[1025px]:flex-col">
             {/* 메인 포스터 */}
-            <figure className="p-4 flex shrink-1 justify-center pointer-events-none ">
+            <figure className="p-4 w-1/2 max-[1025px]:w-full shrink-0 flex justify-center pointer-events-none ">
               {(details.data?.poster_path && (
                 <img
-                  className="aspect-[2/3] object-cover rounded-3xl z-10"
+                  className="aspect-[2/3] w-full object-cover rounded-3xl z-10"
                   src={`${details.baseUrl}${details.data?.poster_path}`}
                   alt="Movie main poster"
                 />
               )) || (
                 <img
-                  className="aspect-[2/3] object-cover rounded-3xl z-10"
+                  className="aspect-[2/3] w-full object-cover rounded-3xl z-10"
                   src={Empty}
                   alt="Movie main poster"
                 />
@@ -114,7 +113,7 @@ export const Detail = memo(() => {
             </figure>
 
             {/* 오리지널 타이틀 & 개봉 연도 */}
-            <article className="flex flex-col shrink-2 px-4 py-10  h-full text-base max-[513px]:text-sm min-[1024px]:text-lg min-[2048px]:text-2xl">
+            <article className="flex flex-col px-4 py-10 w-full h-full text-base max-[513px]:text-sm min-[1024px]:text-lg min-[2048px]:text-2xl">
               <div className="flex justify-between items-center pb-2 gap-15 text-gray-400">
                 <p className="">{details.data?.original_title}</p>
                 <p className="font-light ">
@@ -176,11 +175,11 @@ export const Detail = memo(() => {
           </div>
 
           {/* 추가 이미지 & 영상 */}
-          <article className="flex cursor-grab [&.is-dragging]:cursor-grabbing py-16 max-[513px]:py-12 min-[2048px]:py-24 flex-col px-4 text-base min-[1024px]:text-xl min-[2048px]:text-2xl z-10">
+          <article className="flex py-16 max-[513px]:py-12 min-[2048px]:py-24 flex-col px-4 text-base min-[1024px]:text-xl min-[2048px]:text-2xl z-10">
             <h6>추가 이미지</h6>
             <div
               ref={subImgRef}
-              className="flex cursor-grab py-4 max-[513px]:py-2 overflow-scroll scrollbar-none"
+              className="flex cursor-grab [&.is-dragging]:cursor-grabbing py-4 max-[513px]:py-2 overflow-scroll scrollbar-none"
             >
               {details.data?.images?.backdrops?.map((el, idx) => (
                 <img
@@ -197,7 +196,7 @@ export const Detail = memo(() => {
               <h6>트레일러 & 티저 영상</h6>
               <div
                 ref={videoRef}
-                className="flex cursor-grab py-4 max-[513px]:py-2 gap-4 rounded-2xl overflow-scroll scrollbar-none max-[1025px]:snap-x max-[1025px]:snap-mandatory"
+                className="flex py-4 max-[513px]:py-2 gap-4 rounded-2xl overflow-scroll scrollbar-none max-[1025px]:snap-x max-[1025px]:snap-mandatory"
               >
                 {getYouTube &&
                   getYouTube?.map((el, idx) => (
