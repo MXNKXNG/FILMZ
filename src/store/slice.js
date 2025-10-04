@@ -12,7 +12,7 @@ export const movieListSlice = createSlice({
   initialState: {
     status: "idle",
     error: null,
-    baseUrl: "https://image.tmdb.org/t/p/w300",
+    baseUrl: "https://image.tmdb.org/t/p/w400",
     popular: { data: [] },
     nowPlaying: { data: [] },
     koreaMade: { data: [] },
@@ -67,7 +67,7 @@ export const detailSlice = createSlice({
   initialState: {
     data: [],
     status: "idle",
-    baseUrl: "https://image.tmdb.org/t/p/w500",
+    baseUrl: "https://image.tmdb.org/t/p/original",
   },
   reducers: {},
   extraReducers: (builder) => {

@@ -34,7 +34,7 @@ export const Banner = memo(({ el, baseUrl, containerRef, diff }) => {
       <figure className="w-[96dvw] max-[513px]:w-[90dvw] max-[1025px]:w-[94dvw] flex justify-center items-center">
         {el.backdrop_path ? (
           <img
-            className="aspect-video rounded-2xl"
+            className="aspect-video w-full rounded-2xl"
             src={`${baseUrl}${el.backdrop_path}`}
             alt="up-coming movie"
           />
