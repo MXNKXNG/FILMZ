@@ -67,12 +67,12 @@ export const Main = () => {
       {/* Up Coming List */}
       <section
         ref={containerRef}
-        className="relative flex py-10 overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth"
+        className="relative flex py-6 overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth"
       >
         {isUpComingLoad
           ? Array.from({ length: 10 }).map((_, idx) => (
               <MovieCardSkeleton
-                className="w-dvw aspect-video flex mx-56  max-[1025px]:mx-0"
+                className="w-dvw aspect-video flex mx-56 max-[1025px]:mx-0"
                 idx={idx}
                 key={idx}
               />

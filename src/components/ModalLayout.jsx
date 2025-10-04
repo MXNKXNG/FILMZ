@@ -17,14 +17,10 @@ export const ModalPortal = ({ children }) => {
 // 모달 공통 레이아웃
 export const ModalLayout = ({ showModal, onClose, children }) => {
   const [mounted, setMounted] = useState(false);
-  const [phase, setPhase] = useState("enter");
 
   useEffect(() => {
     if (showModal) {
       setMounted(true);
-      setPhase("enter");
-    } else if (mounted) {
-      setPhase("exit");
     }
   }, [showModal, mounted]);
 
@@ -35,10 +31,11 @@ export const ModalLayout = ({ showModal, onClose, children }) => {
       <section className="flex justify-end px-40 max-[1025px]:justify-center max-[1025px]:px-0 ">
         <div
           onClick={onClose}
+          onAnimationEnd={() => {
+            if (!showModal) setMounted(false);
+          }}
           className={`${
-            phase === "enter"
-              ? "opacity-100 animate-fade-in"
-              : "opacity-0 animate-fade-out"
+            showModal ? "animate-fade-in" : "animate-fade-out"
           } fixed inset-0 z-10 bg-black/50 backdrop-blur-xs transition-all duration-300`}
         ></div>
 
@@ -47,10 +44,10 @@ export const ModalLayout = ({ showModal, onClose, children }) => {
           role="dialog"
           aria-modal={true}
           onAnimationEnd={() => {
-            if (phase === "exit") setMounted(false);
+            if (!showModal) setMounted(false);
           }}
           className={`fixed right-0 h-[70dvh] flex top-0 w-full z-40 transition-all ${
-            phase === "enter" ? "animate-fade-in" : "animate-fade-out"
+            showModal ? "animate-fade-in" : "animate-fade-out"
           }
             `}
         >
