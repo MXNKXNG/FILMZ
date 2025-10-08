@@ -2,13 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { SignUpComplete } from "../components/SignUpComplete";
-import { useSupabase } from "../context/SupabaseContext";
+import { useSupabase } from "../context/AuthProvider";
 import { signUpSchema } from "../utils/validators";
 
 export const SignUp = () => {
-  const { signUp } = useSupabase();
+  const { signUp, session } = useSupabase();
   const [success, setSuccess] = useState(false);
-  const [userInfo, setUserInfo] = useState("");
 
   // RHF 세팅
   const {
@@ -31,10 +30,10 @@ export const SignUp = () => {
 
     if (result?.ok) {
       setSuccess(true);
-      setUserInfo(result?.user.email ?? "");
       reset();
     } else {
       const raw = result?.error?.message || "회원가입 중 오류가 발생했습니다.";
+
       // 정규식 검사를 통해 에러 메시지 관리
       if (/already registered/i.test(raw)) {
         setError("email", { message: "이미 가입된 이메일입니다." });
@@ -189,7 +188,7 @@ export const SignUp = () => {
           </button>
         </form>
       ) : (
-        <SignUpComplete userInfo={userInfo} />
+        <SignUpComplete id={session.user?.id} />
       )}
     </section>
   );

@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate, useSearchParams } from "react-router";
 import github from "../assets/GitHub.png";
 import logo from "../assets/logo2.png";
 import profile from "../assets/profile.png";
-import { useSupabase } from "../context/SupabaseContext";
+import { useSupabase } from "../context/AuthProvider";
 import { ModalLayout } from "./ModalLayout";
 import { SearchModal } from "./SearchModal";
 

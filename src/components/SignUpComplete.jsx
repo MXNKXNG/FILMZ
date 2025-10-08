@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useProfile } from "../features/profiles/useProfile";
 
-export const SignUpComplete = ({ userInfo }) => {
+export const SignUpComplete = ({ id }) => {
+  const { data } = useProfile(id);
+
   const navigate = useNavigate();
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,9 +25,10 @@ export const SignUpComplete = ({ userInfo }) => {
           </h2>
         </div>
         <div className="flex justify-center items-center">
-          <span className="relative text-green-500">✔︎</span>
-
-          <p className="px-1.5">{userInfo}</p>
+          <p className="px-1.5">
+            <span className="px-1 text-green-500"> ✔︎</span>
+            {data?.email}
+          </p>
         </div>
       </article>
     </section>

@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router";
 import profile from "../assets/profile.png";
-import { useSupabase } from "../context/SupabaseContext";
+import { useSupabase } from "../context/AuthProvider";
 
 export const ProfileLayout = () => {
   const { session } = useSupabase();

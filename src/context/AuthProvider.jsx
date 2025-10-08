@@ -1,4 +1,5 @@
 import { createContext, use, useEffect, useRef, useState } from "react";
+import { autoNickname } from "../features/profiles/autoNickname";
 import { supabase } from "./supabase";
 
 const SUPABASE = createContext(null);
@@ -58,11 +59,18 @@ export const SupabaseProvider = ({ children }) => {
   const signUp = async (email, password) => {
     setError(null);
     const { data, error } = await supabase.auth.signUp({ email, password });
+
+    if (!error) {
+      if (data.user?.id) {
+        // profiles 테이블에 upsert
+        await autoNickname(data.user?.id, data.user?.email ?? "");
+      }
+      return { ok: true, user: data.user };
+    }
     if (error) {
       setError(error.message);
       return { ok: false, error };
     }
-    return { ok: true, user: data.user };
   };
 
   // 로그인
@@ -76,6 +84,7 @@ export const SupabaseProvider = ({ children }) => {
       setError(error.message);
       return { ok: false, error };
     }
+
     return { ok: true, user: data.user };
   };
 
