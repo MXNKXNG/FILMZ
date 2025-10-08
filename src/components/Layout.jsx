@@ -93,24 +93,24 @@ export const Layout = () => {
           </article>
           {/* 검색 & 모달 */}
           <section className="flex gap-4 max-[513px]:gap-2.5 w-full justify-end ">
-            {/* {showModal && ( */}
-            <input
-              ref={inputRef}
-              className={`${
-                showModal ? "animate-fade-in" : "animate-fade-out"
-              } text-black text-base min-[2048px]:text-2xl w-96 max-[1025px]:w-3/4 h-12 max-[1025px]:h-10 min-[2048px]:h-20 rounded-2xl min-[2048px]:rounded-4xl bg-white px-3 py-2 focus:border-2 border-[#FEE502] outline-none`}
-              type="search"
-              name=""
-              id=""
-              onAnimationEnd={() => {
-                if (!showModal) setShowModal(false);
-              }}
-              onChange={(e) => {
-                setQuery(e.target.value.trim());
-                navigate(`?search=${e.target.value.trim()}`);
-              }}
-            />
-            {/* )} */}
+            {showModal && (
+              <input
+                ref={inputRef}
+                className={`${
+                  showModal ? "animate-fade-in" : "animate-fade-out"
+                } text-black text-base min-[2048px]:text-2xl w-96 max-[1025px]:w-3/4 h-12 max-[1025px]:h-10 min-[2048px]:h-20 rounded-2xl min-[2048px]:rounded-4xl bg-white px-3 py-2 focus:border-2 border-[#FEE502] outline-none`}
+                type="search"
+                name=""
+                id=""
+                onAnimationEnd={() => {
+                  if (!showModal) setShowModal(false);
+                }}
+                onChange={(e) => {
+                  setQuery(e.target.value.trim());
+                  navigate(`?search=${e.target.value.trim()}`);
+                }}
+              />
+            )}
 
             <button className="cursor-pointer z-60" onClick={modalHandle}>
               검색
@@ -127,29 +127,30 @@ export const Layout = () => {
                       width={20}
                       src={profile}
                     />
-
-                    <div
-                      onAnimationEnd={() => {
-                        if (!showProfile) setShowProfile(false);
-                      }}
-                      className={`absolute top-8 min-[1024px]:top-11 min-[2048px]:top-14 right-0 flex flex-col justify-center items-center border rounded-lg bg-black ${
-                        showProfile ? "animate-fade-in" : "animate-fade-out"
-                      }`}
-                    >
-                      <Link
-                        to={`/mypage/${session.user.id}`}
-                        onClick={() => setShowProfile(false)}
-                        className="px-6 py-2 cursor-pointer active:scale-90"
+                    {showProfile && (
+                      <div
+                        onAnimationEnd={() => {
+                          if (!showProfile) setShowProfile(false);
+                        }}
+                        className={`absolute top-8 min-[1024px]:top-11 min-[2048px]:top-14 right-0 flex flex-col justify-center items-center border rounded-lg bg-black ${
+                          showProfile ? "animate-fade-in" : "animate-fade-out"
+                        }`}
                       >
-                        프로필
-                      </Link>
-                      <button
-                        onClick={signOutHandler}
-                        className="border-t border-white px-6 py-2 cursor-pointer text-[#a04455] active:scale-90"
-                      >
-                        로그아웃
-                      </button>
-                    </div>
+                        <Link
+                          to={`/mypage/${session.user.id}`}
+                          onClick={() => setShowProfile(false)}
+                          className="px-6 py-2 cursor-pointer active:scale-90"
+                        >
+                          프로필
+                        </Link>
+                        <button
+                          onClick={signOutHandler}
+                          className="border-t border-white px-6 py-2 cursor-pointer text-[#a04455] active:scale-90"
+                        >
+                          로그아웃
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
                 {!session && <Link to="/login">로그인</Link>}

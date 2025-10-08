@@ -19,20 +19,20 @@ export const ProfileLayout = () => {
         </article>
         <nav className="flex flex-col gap-4 px-4">
           <NavLink
-            to={`/mypage/${session.user.id}`}
+            to={`/mypage/${session?.user?.id}`}
             end
             className=" cursor-pointer active:scale-90 aria-[current=page]:text-rose-500 aria-[current=page]:font-semibold"
           >
             프로필
           </NavLink>
           <NavLink
-            to={`/mypage/info/${session.user.id}`}
+            to={`/mypage/info/${session?.user?.id}`}
             className=" cursor-pointer active:scale-90 aria-[current=page]:text-rose-500 aria-[current=page]:font-semibold"
           >
             내 정보
           </NavLink>
           <NavLink
-            to={`/mypage/list/${session.user.id}`}
+            to={`/mypage/list/${session?.user?.id}`}
             className=" cursor-pointer active:scale-90 aria-[current=page]:text-rose-500 aria-[current=page]:font-semibold"
           >
             내가 찜한 리스트
