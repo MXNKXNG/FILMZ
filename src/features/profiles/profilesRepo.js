@@ -36,7 +36,7 @@ export const getProfile = async (userId) => {
 export const updateNickname = async (userId, nickname) => {
   const { error } = await supabase
     .from("profiles")
-    .update({ nickname })
+    .update({ nickname: nickname })
     .eq("user_id", userId);
 
   if (error) {

@@ -8,7 +8,6 @@ export const ProfileLayout = () => {
   const { pathname } = useLocation();
   const navList = [
     { label: "프로필 홈", path: `/mypage/${session?.user?.id}`, end: true },
-    { label: "내 정보", path: `/mypage/info/${session?.user?.id}` },
     { label: "내가 찜한 리스트", path: `/mypage/list/${session?.user?.id}` },
   ];
 
@@ -41,7 +40,9 @@ export const ProfileLayout = () => {
 
         <nav
           className={`flex flex-col items-start w-4/5 ${
-            showNav ? "opacity-100 translate-0" : "opacity-0 -translate-y-2"
+            showNav
+              ? "opacity-100 translate-0"
+              : "pointer-events-none opacity-0 -translate-y-2"
           } items-center gap-2 transition-all duration-300`}
         >
           {restList.map((el) => (
@@ -49,6 +50,7 @@ export const ProfileLayout = () => {
               key={el.path}
               end={Boolean(el.end)}
               to={el.path}
+              onClick={() => setShowNav(false)}
               className="px-4 cursor-pointer opacity-60 transition-all duration-300 active:scale-90"
             >
               {el.label}

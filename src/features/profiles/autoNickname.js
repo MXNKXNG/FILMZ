@@ -9,12 +9,12 @@ export const autoNickname = async (userId, email) => {
   for (let i = 0; i < 50; i++) {
     const suffix = i === 0 ? "" : String(i);
     const firstNickname = (base + suffix).slice(0, 20);
-    const result = await upsertProfile(userId, firstNickname, email);
+    const res = await upsertProfile(userId, firstNickname, email);
 
-    if (result.ok) return { ok: true, nickname: firstNickname };
-    if (result.code === "NICKNAME") continue;
+    if (res.ok) return { ok: true, nickname: firstNickname };
+    if (res.code === "NICKNAME") continue;
 
-    return { ok: false, code: result.code };
+    return { ok: false, code: res.code };
   }
   return { ok: false, code: "DONE" };
 };

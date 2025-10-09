@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getProfile } from "./profilesRepo";
 
 export const useProfile = (userId) => {
@@ -6,27 +6,28 @@ export const useProfile = (userId) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const refetch = useCallback(async () => {
     if (!userId) {
       setData(null);
       setError(null);
       setLoading(false);
       return;
     }
-
     setLoading(true);
-    (async () => {
-      const result = await getProfile(userId);
+    const res = await getProfile(userId);
 
-      if (result.ok) {
-        setData(result.data);
-        setError(null);
-      } else {
-        setError(result.code ?? "UNKNOWN");
-      }
-      setLoading(false);
-    })();
+    if (res.ok) {
+      setData(res.data);
+      setError(null);
+    } else {
+      setError(res.code ?? "UNKNOWN");
+    }
+    setLoading(false);
   }, [userId]);
 
-  return { data, loading, error };
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  return { data, loading, error, refetch };
 };

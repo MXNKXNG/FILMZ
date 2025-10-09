@@ -7,7 +7,6 @@ import { Detail } from "./pages/Detail";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { Main } from "./pages/Main";
-import { MyInfo } from "./pages/MyInfo";
 import { MyList } from "./pages/MyList";
 import { MyPage } from "./pages/MyPage";
 import { NotFound } from "./pages/NotFound";
@@ -29,7 +28,6 @@ function App() {
           {/* 프로필 공통 레이아웃 */}
           <Route path="/mypage" element={<ProfileLayout />}>
             <Route path=":id" element={<MyPage />} />
-            <Route path="info/:id" element={<MyInfo />} />
             <Route path="list/:id" element={<MyList />} />
           </Route>
 

@@ -2,6 +2,7 @@ import { getRegExp } from "korean-regexp";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
+import Empty from "../assets/poster.png";
 import { useDebounce } from "../hooks/useDebounce";
 import { fetchSearch } from "../store/thunk";
 
@@ -30,11 +31,20 @@ export const SearchModal = ({ onClose, query }) => {
                 el && (
                   <Link key={el.id} onClick={onClose} to={`/main/${el.id}`}>
                     <div className="flex gap-4 min-[2048px]:gap-8 max-[513px]:gap-2 overflow-y-scroll overflow-x-hidden scrollbar-none hover:scale-105 active:scale-105 duration-300">
-                      <img
-                        className="aspect-video h-24 max-[513px]:h-16 max-[1025px]:h-20 min-[2048px]:h-40 rounded-xl"
-                        src={`${searchData?.baseUrl}${el.backdrop_path}`}
-                        alt="movie image"
-                      />
+                      {el.backdrop_path ? (
+                        <img
+                          className="aspect-video h-24 max-[513px]:h-16 max-[1025px]:h-20 min-[2048px]:h-40 rounded-xl"
+                          src={`${searchData?.baseUrl}${el.backdrop_path}`}
+                          alt="movie image"
+                        />
+                      ) : (
+                        <img
+                          className="aspect-video h-24 max-[513px]:h-16 max-[1025px]:h-20 min-[2048px]:h-40 rounded-xl"
+                          src={Empty}
+                          alt="movie image"
+                        />
+                      )}
+
                       <div className="flex flex-col gap-1 py-1 min-[2048px]:gap-3 min-[2048px]:py-4">
                         <p className="text-sm max-[513px]:text-xs min-[2048px]:text-xl text-gray-500 line-clamp-1">
                           {el.original_title}
