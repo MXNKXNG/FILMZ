@@ -4,7 +4,7 @@ import github from "../assets/GitHub.png";
 import logo from "../assets/logo2.png";
 import { useSupabase } from "../context/AuthProvider";
 import { useAvatarUrl } from "../features/profiles/useAvatarUrl";
-import { useProfile } from "../features/profiles/useProfile";
+import { useProfileQuery } from "../features/profiles/useProfileQuery";
 import { ModalLayout } from "./ModalLayout";
 import { SearchModal } from "./SearchModal";
 
@@ -18,13 +18,13 @@ export const Layout = () => {
   const { session, lastAuthEvent, signOut, clearLastAuthEvent } = useSupabase();
   const [successLogIn, setSuccessLogIn] = useState(false);
   const [successLogOut, setSuccessLogOut] = useState(false);
-  const { data } = useProfile(session?.user?.id);
+  const { data } = useProfileQuery(session?.user?.id);
   const { url } = useAvatarUrl(data?.profile_path, data?.updated_at);
 
   // 검색 박스 포커스
   useEffect(() => {
     if (showModal) {
-      inputRef.current.focus();
+      inputRef?.current.focus();
     }
   }, [showModal]);
 
@@ -33,7 +33,10 @@ export const Layout = () => {
     setShowModal((prev) => !prev);
     setSearchParams({});
     setShowProfile(false);
-    inputRef.current.value = "";
+
+    if (inputRef?.current?.value) {
+      inputRef.current.value = "";
+    }
   };
 
   // 세션 여부에 따른 상태 변경

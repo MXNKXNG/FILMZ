@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useProfile } from "../features/profiles/useProfile";
+import { useProfileQuery } from "../features/profiles/useProfileQuery";
 
 export const SignUpComplete = ({ id }) => {
-  const { data } = useProfile(id);
+  const { data } = useProfileQuery(id);
 
   const navigate = useNavigate();
   useEffect(() => {

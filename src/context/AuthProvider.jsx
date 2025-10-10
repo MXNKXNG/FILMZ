@@ -1,5 +1,6 @@
 import { createContext, use, useEffect, useRef, useState } from "react";
 import { autoNickname } from "../features/profiles/autoNickname";
+import { useAuthStore } from "../store/authStore";
 import { supabase } from "./supabase";
 
 const SUPABASE = createContext(null);
@@ -14,7 +15,9 @@ export const useSupabase = () => {
   return supabase;
 };
 
-export const SupabaseProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
+  const setSessionGlobal = useAuthStore((s) => s.setSession);
+  const clearSessionGlobal = useAuthStore((s) => s.clearSession);
   const [session, setSession] = useState(null);
   const [lastAuthEvent, setLastAuthEvent] = useState(null);
   const [error, setError] = useState(null);
@@ -29,6 +32,7 @@ export const SupabaseProvider = ({ children }) => {
       } = await supabase.auth.getSession();
 
       setSession(session || null);
+      setSessionGlobal(session || null);
       wasAuthedRef.current = !!session;
       initDoneRef.current = true;
     })();
@@ -39,6 +43,13 @@ export const SupabaseProvider = ({ children }) => {
     } = supabase.auth.onAuthStateChange((event, newSession) => {
       if (!initDoneRef.current) return;
       setSession(newSession);
+
+      if (newSession) {
+        setSessionGlobal(newSession);
+      } else {
+        clearSessionGlobal();
+      }
+
       const now = !!newSession;
 
       if (!wasAuthedRef.current && now) {

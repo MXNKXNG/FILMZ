@@ -77,11 +77,11 @@ export const Detail = memo(() => {
         <article className="relative w-full h-full flex flex-col text-white rounded-4xl bg-black shadow-[4px_10px_20px_rgba(0,0,0,0.7)] min-[2048px]:px-24 py-14 max-[513px]:px-4 px-16">
           {/* 닫기 버튼 */}
           <button
-            className="absolute top-5 min-[2048px]:top-8 right-5 h-10 w-10 max-[513px]:w-6 min-[2048px]:w-16 min-[2048px]:h-16 z-20 cursor-pointer hover:scale-90 active:scale-75 duration-300"
+            className="absolute group top-5 min-[2048px]:top-8 right-5 h-10 w-10 max-[513px]:w-6 min-[2048px]:w-16 min-[2048px]:h-16 z-20 cursor-pointer active:scale-75"
             onClick={() => navigate("/main")}
           >
-            <span className="h-[1px] w-10 max-[513px]:w-6 min-[2048px]:w-16 bg-gray-500 absolute top-5 min-[2048px]:top-8 right-0 rotate-45 z-30"></span>
-            <span className="h-[1px] w-10 max-[513px]:w-6 min-[2048px]:w-16 bg-gray-500 absolute top-5 min-[2048px]:top-8 right-0 -rotate-45 z-30"></span>
+            <span className="h-[1px] w-10 max-[513px]:w-6 min-[2048px]:w-16 group-hover:bg-white bg-gray-500 absolute top-5 min-[2048px]:top-8 right-0 rotate-45 z-30"></span>
+            <span className="h-[1px] w-10 max-[513px]:w-6 min-[2048px]:w-16 group-hover:bg-white bg-gray-500 absolute top-5 min-[2048px]:top-8 right-0 -rotate-45 z-30"></span>
           </button>
           <div className="flex max-[1025px]:flex-col">
             {/* 메인 포스터 */}

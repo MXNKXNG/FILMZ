@@ -5,11 +5,11 @@ import { useSupabase } from "../context/AuthProvider";
 import { supabase } from "../context/supabase";
 import { avatarUpload } from "../features/profiles/avatarUpload";
 import { useAvatarUrl } from "../features/profiles/useAvatarUrl";
-import { useProfile } from "../features/profiles/useProfile";
+import { useProfileQuery } from "../features/profiles/useProfileQuery";
 
 export const MyPage = () => {
   const { session } = useSupabase();
-  const { data, refetch } = useProfile(session?.user?.id);
+  const { data } = useProfileQuery(session?.user?.id);
   const { url } = useAvatarUrl(data?.profile_path, data?.updated_at);
   const [error, setError] = useState(null);
   const fileRef = useRef(null);
@@ -31,7 +31,6 @@ export const MyPage = () => {
       return;
     }
     setError(null);
-    await refetch();
   };
 
   return (
@@ -74,13 +73,7 @@ export const MyPage = () => {
             <p>{data?.email}</p>
           </div>
           <ModalLayout showModal={showModal} onClose={modalHandle}>
-            <UpdateInfoModal
-              onUpdated={async () => {
-                await refetch();
-              }}
-              showModal={showModal}
-              onClose={modalHandle}
-            />
+            <UpdateInfoModal showModal={showModal} onClose={modalHandle} />
           </ModalLayout>
         </article>
       )}
