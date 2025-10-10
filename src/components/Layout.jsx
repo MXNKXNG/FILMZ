@@ -5,20 +5,21 @@ import logo from "../assets/logo2.png";
 import { useSupabase } from "../context/AuthProvider";
 import { useAvatarUrl } from "../features/profiles/useAvatarUrl";
 import { useProfileQuery } from "../features/profiles/useProfileQuery";
+import { useAuthStore } from "../store/authStore";
 import { ModalLayout } from "./ModalLayout";
 import { SearchModal } from "./SearchModal";
+import { Toaster } from "./Toaster";
 
 export const Layout = () => {
+  const userId = useAuthStore((s) => s.userId);
   const [showModal, setShowModal] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [_, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [query, setQuery] = useState("");
-  const { session, lastAuthEvent, signOut, clearLastAuthEvent } = useSupabase();
-  const [successLogIn, setSuccessLogIn] = useState(false);
-  const [successLogOut, setSuccessLogOut] = useState(false);
-  const { data } = useProfileQuery(session?.user?.id);
+  const { signOut } = useSupabase();
+  const { data } = useProfileQuery(userId);
   const { url } = useAvatarUrl(data?.profile_path, data?.updated_at);
 
   // 검색 박스 포커스
@@ -39,44 +40,9 @@ export const Layout = () => {
     }
   };
 
-  // 세션 여부에 따른 상태 변경
-  useEffect(() => {
-    if (lastAuthEvent === "SIGNED_IN") {
-      setSuccessLogIn(true);
-    }
-    if (lastAuthEvent === "SIGNED_OUT") {
-      setSuccessLogOut(true);
-    }
-    clearLastAuthEvent();
-  }, [lastAuthEvent, clearLastAuthEvent]);
-
-  // 로그인 성공 시
-  useEffect(() => {
-    if (!successLogIn) return;
-    const timer = setTimeout(() => {
-      setSuccessLogIn(false);
-    }, 2000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [successLogIn]);
-
-  // 로그아웃 성공 시
-  useEffect(() => {
-    if (!successLogOut) return;
-    const timer = setTimeout(() => {
-      setSuccessLogOut(false);
-    }, 2000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [successLogOut]);
-
   // 로그아웃 핸들러
   const signOutHandler = () => {
-    if (!session) return;
+    if (!userId) return;
     setShowProfile(false);
     signOut();
     navigate("/main");
@@ -125,7 +91,7 @@ export const Layout = () => {
             {/* 로그인 & 프로필 */}
             <section className="flex">
               <article className="flex justify-center items-center gap-4 z-[51]">
-                {session && (
+                {userId && (
                   <div className="relative z-60">
                     <img
                       key={data?.updated_at}
@@ -144,7 +110,7 @@ export const Layout = () => {
                         }`}
                       >
                         <Link
-                          to={`/mypage/${session.user.id}`}
+                          to={`/mypage/${userId}`}
                           onClick={() => setShowProfile(false)}
                           className="px-6 py-2 cursor-pointer active:scale-90"
                         >
@@ -160,26 +126,14 @@ export const Layout = () => {
                     )}
                   </div>
                 )}
-                {!session && <Link to="/login">로그인</Link>}
+                {!userId && <Link to="/login">로그인</Link>}
               </article>
             </section>
           </section>
         </section>
 
         {/* 로그인 토스트 */}
-        {successLogIn && (
-          <div className="fixed animate-fade-in text-center left-[48dvw] flex justify-center items-center max-[513px]:top-0 top-2 min-[2048px]:top-8 min-[2048px]:text-lg z-50 text-white text-nowrap">
-            <span className="relative text-green-500">✔︎</span>
-            <h2 className="py-4 px-1.5 flex justify-center">로그인</h2>
-          </div>
-        )}
-
-        {successLogOut && (
-          <div className="fixed animate-fade-in left-[48dvw] flex justify-center items-center max-[513px]:top-0 top-2 min-[2048px]:top-8 min-[2048px]:text-lg z-50 text-white text-nowrap">
-            <span className="relative text-[#a04455]">✔︎</span>
-            <h2 className="py-4 px-1.5 flex justify-center">로그아웃</h2>
-          </div>
-        )}
+        <Toaster />
       </header>
 
       <div className="pt-16 max-[1025px]:pt-10 min-[2048px]:pt-28">

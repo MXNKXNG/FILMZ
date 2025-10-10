@@ -4,6 +4,7 @@ import { fetchProfile } from "../features/profiles/queries";
 import { autoNickname } from "../features/utils/autoNickname";
 import { QK } from "../features/utils/queryKeys";
 import { useAuthStore } from "../store/authStore";
+import { useToastStore } from "../store/toastStore";
 import { supabase } from "./supabase";
 
 const SUPABASE = createContext(null);
@@ -18,16 +19,15 @@ export const useSupabase = () => {
   return supabase;
 };
 
+// provider
 export const AuthProvider = ({ children }) => {
   const queryClient = useQueryClient();
   const setSessionGlobal = useAuthStore((s) => s.setSession);
   const clearSessionGlobal = useAuthStore((s) => s.clearSession);
-
-  const [session, setSession] = useState(null);
-  const [lastAuthEvent, setLastAuthEvent] = useState(null);
   const [error, setError] = useState(null);
-  const wasAuthedRef = useRef(false);
+  const showToast = useToastStore((s) => s.show);
   const initDoneRef = useRef(false);
+  const wasAuthedRef = useRef(false);
 
   // 초기 세션 세팅
   useEffect(() => {
@@ -36,9 +36,11 @@ export const AuthProvider = ({ children }) => {
         data: { session },
       } = await supabase.auth.getSession();
 
-      setSession(session || null);
       setSessionGlobal(session || null);
+
+      // 이전 이벤트 상태
       wasAuthedRef.current = !!session;
+      // 초기 세션 세팅 플래그
       initDoneRef.current = true;
     })();
 
@@ -46,45 +48,52 @@ export const AuthProvider = ({ children }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, newSession) => {
+      // 초기 동기화 이전 신호 가드
       if (!initDoneRef.current) return;
-      setSession(newSession);
 
       if (newSession) setSessionGlobal(newSession);
       else clearSessionGlobal();
 
+      // 상태 전이
       const now = !!newSession;
+      const was = wasAuthedRef.current;
+      const signInedTransition = !was && now;
+      const signOutedTransition = was && !now;
 
       // tanstack/query 캐시 무효화 -- 동기화
-      if (event === "SIGNED_IN") {
+      if (event === "SIGNED_IN" && signInedTransition) {
         queryClient.invalidateQueries({ queryKey: QK.profile() });
         queryClient.invalidateQueries({ queryKey: QK.favorites() });
         queryClient.invalidateQueries({ queryKey: QK.comments() });
 
         // 우선 적용
         if (newSession?.user?.id) {
+          const userId = newSession.user.id;
           queryClient.prefetchQuery({
-            queryKey: QK.profile(newSession.user.id),
-            queryFn: () => fetchProfile(newSession.user.id),
+            queryKey: QK.profile(userId),
+            queryFn: () => fetchProfile(userId),
           });
         }
+
+        showToast({ type: "login", message: "로그인", time: 2000 });
       }
 
-      if (event === "SIGNED_OUT") {
+      if (event === "SIGNED_OUT" && signOutedTransition) {
         queryClient.removeQueries({
           predicate: (q) =>
             ["profile", "favorites", "comments"].includes(q.queryKey?.[0]),
         });
+        showToast({ type: "logout", message: "로그아웃", time: 2000 });
       }
 
-      if (!wasAuthedRef.current && now) setLastAuthEvent("SIGNED_IN");
-      if (wasAuthedRef.current && !now) setLastAuthEvent("SIGNED_OUT");
+      // 토스트 로직 이후 상태 최신화
       wasAuthedRef.current = now;
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [queryClient, setSessionGlobal, clearSessionGlobal]);
+  }, [queryClient, setSessionGlobal, clearSessionGlobal, showToast]);
 
   // 회원가입
   const signUp = async (email, password) => {
@@ -131,14 +140,8 @@ export const AuthProvider = ({ children }) => {
     return { ok: true, data };
   };
 
-  // 이벤트 상태 Clean-up 함수
-  const clearLastAuthEvent = () => setLastAuthEvent(null);
-
   const value = {
-    session,
     error,
-    lastAuthEvent,
-    clearLastAuthEvent,
     signUp,
     signIn,
     signOut,

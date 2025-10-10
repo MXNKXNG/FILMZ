@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
-import { useSupabase } from "../context/AuthProvider";
+import { useAuthStore } from "../store/authStore";
 
 export const ProfileLayout = () => {
-  const { session } = useSupabase();
+  const userId = useAuthStore((s) => s.userId);
   const [showNav, setShowNav] = useState(false);
   const { pathname } = useLocation();
   const navList = [
-    { label: "프로필 홈", path: `/mypage/${session?.user?.id}`, end: true },
-    { label: "내가 찜한 리스트", path: `/mypage/list/${session?.user?.id}` },
+    { label: "프로필 홈", path: `/mypage/${userId}`, end: true },
+    { label: "내가 찜한 리스트", path: `/mypage/list/${userId}` },
   ];
 
   const activeIndex =
@@ -20,8 +20,8 @@ export const ProfileLayout = () => {
 
   return (
     <div className="flex flex-col h-dvh w-full bg-radial-[at_15%_10%] from-[#1f202d] to-[#060c18] to-30% whitespace-nowrap font-normal text-white text-base min-[1024px]:text-lg min-[2048px]:text-2xl">
-      <section className="flex flex-col mt-6 w-full gap-2 max-[513px]:text-sm text-base min-[2048px]:text-xl">
-        <div className="flex justify-between items-center px-4">
+      <section className="flex flex-col mt-10 max-[1025px]:mt-6 min-[2048px]:mt-14 w-full gap-2 max-[513px]:text-sm text-base min-[2048px]:text-xl">
+        <div className="flex justify-between items-center px-6">
           <NavLink
             className="text-[#a52d43]"
             to={activeList.path}

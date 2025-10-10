@@ -1,13 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSupabase } from "../context/AuthProvider";
 import { useNicknameMutation } from "../features/profiles/useNicknameMutation";
 import { nicknameSchema } from "../features/utils/nicknameSchema";
+import { useAuthStore } from "../store/authStore";
 
 export const UpdateInfoModal = ({ showModal, onClose }) => {
-  const { session } = useSupabase();
-  const userId = session?.user?.id;
+  const userId = useAuthStore((s) => s.userId);
   const [message, setMessage] = useState(null);
   const inputRef = useRef(null);
   const timerRef = useRef(null);
@@ -80,11 +79,11 @@ export const UpdateInfoModal = ({ showModal, onClose }) => {
   return (
     <section
       onClick={(e) => e.stopPropagation()}
-      className={`whitespace-nowrap flex flex-col items-center justify-center text-base w-full h-full text-white ${
+      className={`whitespace-nowrap flex flex-col items-center justify-center text-base relative top-32 min-[2048px]:top-40 text-white ${
         showModal ? "animate-fade-in" : "animate-fade-out"
       }`}
     >
-      <article className="relative flex flex-col min-[1024px]:w-2/5 w-2/3 h-1/3 justify-center items-center border rounded-3xl">
+      <article className="relative flex flex-col max-[513px]:w-full min-[1024px]:w-140 w-100 min-[1024px]:h-100 h-80 justify-center items-center border rounded-3xl">
         <button
           className="absolute top-2 right-3 h-10 w-10 max-[513px]:w-6 min-[2048px]:w-14 min-[2048px]:h-14 z-20 cursor-pointer group active:scale-75"
           onClick={onClose}
