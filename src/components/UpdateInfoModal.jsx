@@ -2,20 +2,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSupabase } from "../context/AuthProvider";
-import { updateNickname } from "../features/profiles/profilesRepo";
+import { useNicknameMutation } from "../features/profiles/useNicknameMutation";
 import { nicknameSchema } from "../features/utils/nicknameSchema";
 
-export const UpdateInfoModal = ({ showModal, onClose, onUpdated }) => {
+export const UpdateInfoModal = ({ showModal, onClose }) => {
   const { session } = useSupabase();
+  const userId = session?.user?.id;
   const [message, setMessage] = useState(null);
   const inputRef = useRef(null);
   const timerRef = useRef(null);
+
+  const { mutate: changeNickname, isPending } = useNicknameMutation(userId);
 
   // RHF 세팅
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isValid },
     reset,
     watch,
   } = useForm({
@@ -26,39 +29,41 @@ export const UpdateInfoModal = ({ showModal, onClose, onUpdated }) => {
 
   // Submit 핸들러 - RHF 유효성 통과한 값만
   const onSubmit = async ({ nickname }) => {
-    if (!session?.user?.id) {
+    if (!userId) {
       setMessage("로그인이 필요합니다.");
       return;
     }
 
-    const result = await updateNickname(session?.user?.id, nickname);
+    changeNickname(nickname, {
+      onSuccess: () => {
+        setMessage("닉네임이 변경되었습니다.");
+        reset();
 
-    if (result?.ok) {
-      setMessage("닉네임이 변경되었습니다.");
-      await onUpdated?.();
-      reset();
+        timerRef.current = setTimeout(() => {
+          onClose?.();
+        }, 2000);
+      },
 
-      timerRef.current = setTimeout(() => {
-        onClose?.();
-      }, 2000);
-      return;
-    } else {
-      switch (result.code) {
-        case "RLS":
-          setMessage("닉네임 변경 권한이 없습니다.");
-          break;
-        case "NICKNAME":
-          setMessage("이미 사용중인 닉네임입니다.");
-          break;
-        default:
-          setMessage("알 수 없는 오류가 발생했습니다.");
-      }
-    }
+      onError: (err) => {
+        const code = err?.message || "UNKNOWN";
+
+        switch (code) {
+          case "RLS":
+            setMessage("닉네임 변경 권한이 없습니다.");
+            break;
+          case "NICKNAME":
+            setMessage("이미 사용중인 닉네임입니다.");
+            break;
+          default:
+            setMessage("알 수 없는 오류가 발생했습니다.");
+        }
+      },
+    });
   };
 
   const value = watch("nickname");
 
-  // 포커스
+  // 포커스 / 클린업
   useEffect(() => {
     if (showModal) {
       inputRef.current?.focus();
@@ -93,8 +98,9 @@ export const UpdateInfoModal = ({ showModal, onClose, onUpdated }) => {
         >
           <div className="w-auto flex gap-4 relative">
             <input
+              autoComplete="off"
               ref={inputRef}
-              disabled={isSubmitting}
+              disabled={isPending}
               className=" text-black text-base min-[2048px]:text-2xl w-full h-12 max-[1025px]:h-10 min-[2048px]:h-16 rounded-2xl bg-white px-4 py-2 focus:border-2 border-[#FEE502] outline-none"
               type="text"
               {...register("nickname")}
@@ -106,19 +112,19 @@ export const UpdateInfoModal = ({ showModal, onClose, onUpdated }) => {
                     nickname: "",
                   })
                 }
-                className="z-10 cursor-pointer absolute max-[1025px]:top-3 top-4 right-28 min-[2048px]:top-5 bg-gray-400 rounded-full text-xs font-light pb-0.5 aspect-1/1 h-4 min-[2048px]:h-6 flex items-center justify-center"
+                className="z-10 cursor-pointer absolute max-[1025px]:top-3 top-4 right-32 max-[513px]:right-28 min-[2048px]:top-5 bg-gray-400 rounded-full text-xs font-light pb-0.5 aspect-1/1 h-4 min-[2048px]:h-6 flex items-center justify-center"
               >
                 x
               </span>
             )}
             <button
-              disabled={!isValid || isSubmitting}
+              disabled={!isValid || isPending}
               className={`rounded-2xl py-2 px-6 max-[513px]:text-xs ${
                 isValid ? "bg-[#a04455]" : "bg-gray-600"
               }`}
               type="submit"
             >
-              {isSubmitting ? "Updating..." : "Update"}
+              {isPending ? "Updating..." : "Update"}
             </button>
           </div>
           <div className="absolute -bottom-10 left-0 max-[513px]:text-xs max-[1025px]:text-sm">

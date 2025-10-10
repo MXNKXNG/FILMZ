@@ -2,18 +2,19 @@ import { useRef, useState } from "react";
 import { ModalLayout } from "../components/ModalLayout";
 import { UpdateInfoModal } from "../components/UpdateInfoModal";
 import { useSupabase } from "../context/AuthProvider";
-import { supabase } from "../context/supabase";
-import { avatarUpload } from "../features/profiles/avatarUpload";
+import { useAvatarMutation } from "../features/profiles/useAvatarMutation";
 import { useAvatarUrl } from "../features/profiles/useAvatarUrl";
 import { useProfileQuery } from "../features/profiles/useProfileQuery";
 
 export const MyPage = () => {
   const { session } = useSupabase();
-  const { data } = useProfileQuery(session?.user?.id);
+  const userId = session?.user?.id;
+  const { data } = useProfileQuery(userId);
   const { url } = useAvatarUrl(data?.profile_path, data?.updated_at);
-  const [error, setError] = useState(null);
   const fileRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
+
+  const { mutate: changeAvatar, isPending, error } = useAvatarMutation(userId);
 
   // 모달 핸들러
   const modalHandle = () => {
@@ -24,13 +25,11 @@ export const MyPage = () => {
   const onChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const result = await avatarUpload(supabase, session?.user?.id, file);
-    if (fileRef.current) fileRef.current.value = "";
-    if (!result.ok) {
-      setError(result.message);
-      return;
-    }
-    setError(null);
+    changeAvatar(file, {
+      onSettled: () => {
+        if (fileRef.current) fileRef.current.value = "";
+      },
+    });
   };
 
   return (
@@ -48,7 +47,7 @@ export const MyPage = () => {
         )}
 
         <label className="px-3 py-1.5 cursor-pointer active:scale-90 hover:text-white text-gray-500 border rounded-xl text-xs">
-          Edit image
+          {isPending ? "Editing..." : "Edit image"}
           <input
             onChange={onChange}
             ref={fileRef}

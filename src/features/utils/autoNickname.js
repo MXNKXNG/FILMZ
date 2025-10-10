@@ -1,7 +1,18 @@
-import { baseNickname } from "../utils/baseNickname";
-import { upsertProfile } from "./profilesRepo";
+import { upsertProfile } from "../profiles/profilesRepo";
 
-// 회원가입 시 이메일 앞부분 기본 닉네임으로 설정
+// 닉네임 기본값 규칙
+const baseNickname = (email = "") => {
+  const local = (email.split("@")[0] ?? "").trim();
+
+  let base = local.replace(/[^\p{L}\p{N}_]+/gu, "_").toLocaleLowerCase();
+
+  if (base.length < 2) base = "user";
+  if (base.length > 16) base = base.slice(0, 16);
+
+  return base;
+};
+
+// 회원가입 시 이메일 앞부분 기본 닉네임으로 설정 -- profile upsert
 export const autoNickname = async (userId, email) => {
   const base = baseNickname(email ?? "");
 

@@ -1,5 +1,8 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { createContext, use, useEffect, useRef, useState } from "react";
-import { autoNickname } from "../features/profiles/autoNickname";
+import { fetchProfile } from "../features/profiles/queries";
+import { autoNickname } from "../features/utils/autoNickname";
+import { QK } from "../features/utils/queryKeys";
 import { useAuthStore } from "../store/authStore";
 import { supabase } from "./supabase";
 
@@ -16,8 +19,10 @@ export const useSupabase = () => {
 };
 
 export const AuthProvider = ({ children }) => {
+  const queryClient = useQueryClient();
   const setSessionGlobal = useAuthStore((s) => s.setSession);
   const clearSessionGlobal = useAuthStore((s) => s.clearSession);
+
   const [session, setSession] = useState(null);
   const [lastAuthEvent, setLastAuthEvent] = useState(null);
   const [error, setError] = useState(null);
@@ -44,27 +49,42 @@ export const AuthProvider = ({ children }) => {
       if (!initDoneRef.current) return;
       setSession(newSession);
 
-      if (newSession) {
-        setSessionGlobal(newSession);
-      } else {
-        clearSessionGlobal();
-      }
+      if (newSession) setSessionGlobal(newSession);
+      else clearSessionGlobal();
 
       const now = !!newSession;
 
-      if (!wasAuthedRef.current && now) {
-        setLastAuthEvent("SIGNED_IN");
+      // tanstack/query 캐시 무효화 -- 동기화
+      if (event === "SIGNED_IN") {
+        queryClient.invalidateQueries({ queryKey: QK.profile() });
+        queryClient.invalidateQueries({ queryKey: QK.favorites() });
+        queryClient.invalidateQueries({ queryKey: QK.comments() });
+
+        // 우선 적용
+        if (newSession?.user?.id) {
+          queryClient.prefetchQuery({
+            queryKey: QK.profile(newSession.user.id),
+            queryFn: () => fetchProfile(newSession.user.id),
+          });
+        }
       }
-      if (wasAuthedRef.current && !now) {
-        setLastAuthEvent("SIGNED_OUT");
+
+      if (event === "SIGNED_OUT") {
+        queryClient.removeQueries({
+          predicate: (q) =>
+            ["profile", "favorites", "comments"].includes(q.queryKey?.[0]),
+        });
       }
+
+      if (!wasAuthedRef.current && now) setLastAuthEvent("SIGNED_IN");
+      if (wasAuthedRef.current && !now) setLastAuthEvent("SIGNED_OUT");
       wasAuthedRef.current = now;
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [queryClient, setSessionGlobal, clearSessionGlobal]);
 
   // 회원가입
   const signUp = async (email, password) => {
