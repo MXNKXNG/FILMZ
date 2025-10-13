@@ -110,7 +110,7 @@ export const Detail = memo(() => {
                   alt="Backdrop image"
                 />
               )) ||
-                ""}
+                null}
             </figure>
 
             {/* 오리지널 타이틀 & 개봉 연도 */}

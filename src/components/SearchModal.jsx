@@ -30,7 +30,7 @@ export const SearchModal = ({ onClose, query }) => {
               (el) =>
                 el && (
                   <Link key={el.id} onClick={onClose} to={`/main/${el.id}`}>
-                    <div className="flex gap-4 min-[2048px]:gap-8 max-[513px]:gap-2 overflow-y-scroll overflow-x-hidden scrollbar-none hover:scale-105 active:scale-105 duration-300">
+                    <div className="flex gap-4 min-[2048px]:gap-8 max-[513px]:gap-2 overflow-y-scroll overflow-x-hidden scrollbar-none hover:scale-105 active:scale-90 duration-200">
                       {el.backdrop_path ? (
                         <img
                           className="aspect-video h-24 max-[513px]:h-16 max-[1025px]:h-20 min-[2048px]:h-40 rounded-xl"
