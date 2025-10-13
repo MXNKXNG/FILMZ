@@ -2,73 +2,50 @@ import { useEffect, useRef, useState } from "react";
 import { Link, Outlet, useNavigate, useSearchParams } from "react-router";
 import github from "../assets/GitHub.png";
 import logo from "../assets/logo2.png";
-import profile from "../assets/profile.png";
-import { useSupabase } from "../context/SupabaseContext";
+import { useSupabase } from "../context/AuthProvider";
+import { useAvatarUrl } from "../features/profiles/useAvatarUrl";
+import { useProfileQuery } from "../features/profiles/useProfileQuery";
+import { useAuthStore } from "../store/authStore";
 import { ModalLayout } from "./ModalLayout";
 import { SearchModal } from "./SearchModal";
+import { Toaster } from "./Toaster";
 
 export const Layout = () => {
+  const userId = useAuthStore((s) => s.userId);
   const [showModal, setShowModal] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [_, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [query, setQuery] = useState("");
-  const { session, lastAuthEvent, signOut, clearLastAuthEvent } = useSupabase();
-  const [successLogIn, setSuccessLogIn] = useState(false);
-  const [successLogOut, setSuccessLogOut] = useState(false);
+  const { signOut } = useSupabase();
+  const { data } = useProfileQuery(userId);
+  const { url } = useAvatarUrl(data?.profile_path, data?.updated_at);
 
   // 검색 박스 포커스
   useEffect(() => {
     if (showModal) {
-      inputRef.current.focus();
+      inputRef?.current.focus();
     }
   }, [showModal]);
 
   // 모달 핸들러
   const modalHandle = () => {
-    setShowModal(false);
+    setShowModal((prev) => !prev);
     setSearchParams({});
+    setShowProfile(false);
+
+    if (inputRef?.current?.value) {
+      inputRef.current.value = "";
+    }
   };
-
-  // 세션 여부에 따른 상태 변경
-  useEffect(() => {
-    if (lastAuthEvent === "SIGNED_IN") {
-      setSuccessLogIn(true);
-    }
-    if (lastAuthEvent === "SIGNED_OUT") {
-      setSuccessLogOut(true);
-    }
-    clearLastAuthEvent();
-  }, [lastAuthEvent, clearLastAuthEvent]);
-
-  // 로그인 성공 시
-  useEffect(() => {
-    if (!successLogIn) return;
-    const timer = setTimeout(() => {
-      setSuccessLogIn(false);
-    }, 2000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [successLogIn]);
-
-  // 로그아웃 성공 시
-  useEffect(() => {
-    if (!successLogOut) return;
-    const timer = setTimeout(() => {
-      setSuccessLogOut(false);
-    }, 2000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [successLogOut]);
 
   // 로그아웃 핸들러
   const signOutHandler = () => {
-    if (!session) return;
+    if (!userId) return;
+    setShowProfile(false);
     signOut();
+    navigate("/main");
   };
 
   return (
@@ -91,10 +68,15 @@ export const Layout = () => {
             {showModal && (
               <input
                 ref={inputRef}
-                className="animate-fade-in text-black text-base min-[2048px]:text-2xl w-96 max-[1025px]:w-3/4 h-12 max-[1025px]:h-10 min-[2048px]:h-20 rounded-2xl min-[2048px]:rounded-4xl bg-white px-3 py-2 focus:border-2 border-[#FEE502] outline-none"
+                className={`${
+                  showModal ? "animate-fade-in" : "animate-fade-out"
+                } text-black text-base min-[2048px]:text-2xl w-96 max-[1025px]:w-3/4 h-12 max-[1025px]:h-10 min-[2048px]:h-20 rounded-2xl min-[2048px]:rounded-4xl bg-white px-3 py-2 focus:border-2 border-[#FEE502] outline-none`}
                 type="search"
                 name=""
                 id=""
+                onAnimationEnd={() => {
+                  if (!showModal) setShowModal(false);
+                }}
                 onChange={(e) => {
                   setQuery(e.target.value.trim());
                   navigate(`?search=${e.target.value.trim()}`);
@@ -102,40 +84,63 @@ export const Layout = () => {
               />
             )}
 
-            <button
-              className="cursor-pointer"
-              onClick={() => {
-                setShowModal((prev) => !prev);
-                setSearchParams({});
-              }}
-            >
+            <button className="cursor-pointer z-60" onClick={modalHandle}>
               검색
             </button>
 
-            {/* 로그인 & 회원가입 */}
+            {/* 로그인 & 프로필 */}
             <section className="flex">
-              <ul className="flex justify-center items-center gap-4 z-50">
-                <li>
-                  {session ? (
+              <article className="flex justify-center items-center gap-4 z-[51]">
+                {userId && (
+                  <div className="relative z-60">
                     <img
-                      onClick={signOutHandler}
-                      className="cursor-pointer min-[1024px]:w-6.5 min-[2048px]:w-8 bg-white  rounded-full"
+                      key={data?.updated_at}
+                      onClick={() => setShowProfile((prev) => !prev)}
+                      className="cursor-pointer active:scale-90 min-[1024px]:w-6.5 min-[2048px]:w-8 bg-white  rounded-full"
                       width={20}
-                      src={profile}
+                      src={url}
                     />
-                  ) : (
-                    <Link to="/login">로그인</Link>
-                  )}
-                </li>
-              </ul>
+                    {showProfile && (
+                      <div
+                        onAnimationEnd={() => {
+                          if (!showProfile) setShowProfile(false);
+                        }}
+                        className={`absolute top-8 min-[1024px]:top-11 min-[2048px]:top-14 right-0 flex flex-col justify-center items-center border rounded-lg bg-black ${
+                          showProfile ? "animate-fade-in" : "animate-fade-out"
+                        }`}
+                      >
+                        <Link
+                          to={`/mypage/${userId}`}
+                          onClick={() => setShowProfile(false)}
+                          className="px-6 py-2 cursor-pointer active:scale-90"
+                        >
+                          프로필
+                        </Link>
+                        <button
+                          onClick={signOutHandler}
+                          className="border-t border-white px-6 py-2 cursor-pointer text-[#a04455] active:scale-90"
+                        >
+                          로그아웃
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {!userId && <Link to="/login">로그인</Link>}
+              </article>
             </section>
           </section>
         </section>
+
+        {/* 로그인 토스트 */}
+        <Toaster />
       </header>
 
-      <div className="pt-16 max-[1025px]:pt-10 min-[2048px]:pt-32">
+      <div className="pt-16 max-[1025px]:pt-10 min-[2048px]:pt-28">
         <Outlet />
-        <footer className="relative border-t text-gray-500 text-base max-[513px]:text-sm bottom-0 flex flex-col justify-center items-start px-6 max-[513px]:px-3 py-6 max-[513px]:py-3 mb-2 before:h-4/5 before:absolute before:left-2 before:content-[''] before:pr-0.5 before:mr-1.5 before:bg-white">
+
+        {/* 공용 푸터 영역 */}
+        <footer className="relative border-t text-gray-500 text-base max-[513px]:text-sm bottom-0 flex flex-col justify-center items-start px-6 max-[513px]:px-3 py-6 max-[513px]:py-3 bg-[#060c18] before:h-4/5 before:absolute before:left-2 before:content-[''] before:pr-0.5 before:mr-1.5 before:bg-white">
           <Link
             className="flex justify-center items-center hover:text-white active:text-white "
             to={"https://github.com/MXNKXNG"}
@@ -150,24 +155,10 @@ export const Layout = () => {
           <p className="pl-1 hover:text-white active:text-white ">
             oldscratch.co@gmail.com
           </p>
-          {/* <div className="absolute left-3 max-[513px]:left-1.5  w-[1px] max-[513px]:w-[0.5px] h-9/12  bg-white"></div> */}
         </footer>
       </div>
 
-      {successLogIn && (
-        <div className="animate-fade-in absolute w-full flex justify-center items-center max-[513px]:top-0 top-2 min-[2048px]:top-8 min-[2048px]:text-lg z-50 text-white text-nowrap">
-          <span className="relative text-green-500">✔︎</span>
-          <h2 className="py-4 px-1.5 flex justify-center">로그인</h2>
-        </div>
-      )}
-
-      {successLogOut && (
-        <div className="animate-fade-in absolute w-full flex justify-center items-center max-[513px]:top-0 top-2 min-[2048px]:top-8 min-[2048px]:text-lg z-50 text-white text-nowrap">
-          <span className="relative text-[#a04455]">✔︎</span>
-          <h2 className="py-4 px-1.5 flex justify-center">로그아웃</h2>
-        </div>
-      )}
-
+      {/* 검색 모달 */}
       <ModalLayout showModal={showModal} onClose={modalHandle}>
         <SearchModal
           showModal={showModal}

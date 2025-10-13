@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
-import { useSupabase } from "../context/SupabaseContext";
+import { useSupabase } from "../context/AuthProvider";
 import { signInSchema } from "../utils/validators";
 export const Login = () => {
   const { signIn } = useSupabase();
